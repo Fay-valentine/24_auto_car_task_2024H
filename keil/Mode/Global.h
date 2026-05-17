@@ -1,0 +1,19 @@
+#ifndef _GLOBAL_H
+#define _GLOBAL_H
+
+extern volatile uint8_t Mode_Loop_flag;//进入某个模式的标志位，比如进入mode1_loop
+
+//注意模式对应的枚举值
+typedef enum
+{
+    Mode1=1,
+    Mode2=2,
+    Mode3=3,
+}Mode;
+
+void Global_Init(void);
+void Global_Loop(void);
+void Global_Exit(void);
+void Global_Tick(void);
+
+#endif
