@@ -1,5 +1,36 @@
 #include "app_straight_yaw.h"
 
+static YawPID_t yaw_pid;
+volatile float target_yaw = 0.0f;         // 锁定的目标航向
+static uint8_t yaw_locked = 0;          // 是否已锁定朝向
+
+/**
+ * @brief 通过改变target_yaw来改变目标航向角
+ * 
+ * @param yaw 目标航向角，单位：度
+ */
+void set_target_yaw(float yaw)
+{
+    target_yaw=yaw;
+}
+
+float get_target_yaw(void)
+{
+    return target_yaw;
+}
+
+void YawPID_Init(YawPID_t *pid, float kp, float ki, float kd,
+                 float integral_limit, float output_limit)
+{
+    pid->Kp = kp;
+    pid->Ki = ki;
+    pid->Kd = kd;
+    pid->integral = 0.0f;
+    pid->prev_error = 0.0f;
+    pid->integral_limit = integral_limit;
+    pid->output_limit = output_limit;
+}
+
 /**
  * @brief 获取一个经过滤波，漂移补偿后的yaw，消除MPU6050本身的缺陷
  * 
@@ -17,20 +48,6 @@ float get_filtered_yaw(void)
     if (filtered > 180.0f)  filtered -= 360.0f;
     if (filtered < -180.0f) filtered += 360.0f;
     return filtered;
-}
-
-
-
-void YawPID_Init(YawPID_t *pid, float kp, float ki, float kd,
-                 float integral_limit, float output_limit)
-{
-    pid->Kp = kp;
-    pid->Ki = ki;
-    pid->Kd = kd;
-    pid->integral = 0.0f;
-    pid->prev_error = 0.0f;
-    pid->integral_limit = integral_limit;
-    pid->output_limit = output_limit;
 }
 
 /**
@@ -82,10 +99,6 @@ float YawPID_Compute(YawPID_t*pid,float error)
     return outpid;
 }
 
-static YawPID_t yaw_pid;
-volatile float target_yaw = 0.0f;         // 锁定的目标航向
-static uint8_t yaw_locked = 0;          // 是否已锁定朝向
-
 /**
  * @brief 用于重置状态
  * 
@@ -94,12 +107,12 @@ void StraightLineWalk_IMU_Reset(void)
 {
     //yaw_locked = 0;   // 清空锁定标志
     // PID 积分也可以清零（可选）
-    Yaw_lock();
+    //Yaw_lock();不解锁采样
     yaw_pid.integral = 0;
     PID_Clear_Motor(MAX_MOTOR);   // 清零两个电机的积分和输出
 }
 
-void Yaw_lock()
+void Yaw_Unlock(void)
 {
     yaw_locked = 0;   // 清空锁定标志
 }
@@ -141,7 +154,7 @@ void StraightLineWalk_IMU(void)
         }
         target_yaw = sum_raw / 40.0f;
         yaw_locked = 1;
-        OLED_ShowSNum_Grid(3,11,target_yaw,4,1,0,1);//更新显示一次target_yaw
+        //OLED_ShowSNum_Grid(3,11,target_yaw,4,1,0,1);//更新显示一次target_yaw
         return;//进行下一次周期，防止current_yaw未更新
     }
 

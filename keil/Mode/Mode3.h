@@ -1,5 +1,7 @@
-#ifndef _MODE3_H
-#define _MODE3_H
+#ifndef _MODE3_H_
+#define _MODE3_H_
+
+
 
 void Mode3_Init(void);
 void Mode3_Loop(void);

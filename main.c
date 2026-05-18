@@ -34,6 +34,11 @@
 
 uint8_t Cur_Mode=0,Next_Mode=0;
 
+//OLED显示：
+//1行：模式	 停车点  循环flag
+//2行：模式初始化显示
+//3行：模式退出显示
+//4行：point_count
 
 int main(void)
 {

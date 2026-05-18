@@ -23,7 +23,7 @@ typedef struct
 
 void Black_Check(uint8_t stop_num);
 void Black_Check_Reset(void);
-void Black_Check_Tick(void);
+uint8_t get_is_black(void);
 
 void Schedule_Run(void);
 void turnByAngle(int8_t direction, float angle);

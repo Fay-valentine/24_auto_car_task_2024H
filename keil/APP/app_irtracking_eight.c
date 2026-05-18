@@ -8,6 +8,18 @@
 int pid_output_IRR = 0;
 u8 trun_flag = 0;
 
+static int8_t IR_error_last = 0;
+static float IRTrack_Integral = 0.0f;
+
+/**
+ * @brief 重置位置式PID算法的积分项
+ */
+void IR_PID_Reset(void)
+{
+	IR_error_last = 0;
+	IRTrack_Integral = 0.0f;
+}
+
 #define IRR_SPEED 			  250  //巡线速度	Line patrol speed
 
 int g_IR_track_speed=IRR_SPEED;//全局巡线速度
@@ -24,8 +36,6 @@ float APP_IR_PID_Calc(int8_t actual_value)
 
 	float IRTrackTurn = 0;
 	int8_t error;
-	static int8_t error_last=0;
-	static float IRTrack_Integral;//积分	integral
 	
 	error=actual_value;
 	
@@ -34,7 +44,7 @@ float APP_IR_PID_Calc(int8_t actual_value)
 	//位置式pid	Position pid
 	IRTrackTurn=error*IRTrack_Trun_KP
 							+IRTrack_Trun_KI*IRTrack_Integral
-							+(error - error_last)*IRTrack_Trun_KD;
+							+(error - IR_error_last)*IRTrack_Trun_KD;
 	
 
 
@@ -42,6 +52,8 @@ float APP_IR_PID_Calc(int8_t actual_value)
 			IRTrackTurn = (MAX_SPEED - MOTOR_DEAD_ZONE);
 	if (IRTrackTurn < (MOTOR_DEAD_ZONE - MAX_SPEED))
 			IRTrackTurn = (MOTOR_DEAD_ZONE - MAX_SPEED);
+	
+	IR_error_last = error;
 	return IRTrackTurn;
 }
 

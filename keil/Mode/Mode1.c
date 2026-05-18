@@ -15,18 +15,18 @@ void Mode1_Init(void)
 
 void Mode1_Loop(void)
 {
-	if(Mode_Loop_flag)
+	if(Mode_Loop_flag)//只有在初始化设置了 循环开启flag 为1时 才执行循环Loop
 	{
 		if(g_IR_track_speed!=0)
 		{
 			StraightLineWalk_IMU();//直行
 		}
 		//10ms以上轮询
-		static uint32_t last_black_check = 0;
-		if (Get_Time() - last_black_check >= 10) 
+		static uint32_t last_black_time = 0;
+		if (Get_Time() - last_black_time >= 10) 
 		{
 		    Black_Check(Stop_Num);
-		    last_black_check = Get_Time();
+		    last_black_time = Get_Time();
 		}
 	}
 	
@@ -35,6 +35,7 @@ void Mode1_Loop(void)
 void Mode1_Exit(void)
 {
 	Mode_Loop_flag=0;
+	Stop_Num=0;//清零停车点
 	Motion_Stop(STOP_BRAKE);		//优先刹车
 	g_IR_track_speed = 0;   		//清零目标速度
     StraightLineWalk_IMU_Reset();	//重置直行函数

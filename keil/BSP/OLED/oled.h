@@ -66,6 +66,7 @@ void OLED_ShowNum_Grid(uint8_t line, uint8_t col, uint32_t num, uint8_t len, uin
 void OLED_ShowSNum_Grid(uint8_t line, uint8_t col, int32_t num, uint8_t len, uint8_t mode, bool clear_line, bool refresh);
 void OLED_ClearLine_Grid(uint8_t line, uint8_t mode, bool refresh);
 void OLED_ShowString_Center(uint8_t line, const char *str, uint8_t mode, bool clear_line, bool refresh);
+void OLED_ClearLine(u8 line);
 
 #endif
 

@@ -5,7 +5,13 @@ extern uint8_t Cur_Mode;//在main中定义的
 volatile int Stop_Num=0;//在第几个点停车，全局变量，用于mode切换时进行赋值，在Black_Check()中使用
 uint8_t point_count=1;//记录经过了几个点，有A,B,C,D四个点
 uint8_t last_line=WHITE_LINE;//一开始在白线上
+uint8_t is_black=WHITE_LINE;//是否在黑线上
 
+
+/**
+ * @brief 点数为1，设置上一次在白线，即设置为A点状态
+ * 
+ */
 void Black_Check_Reset(void)
 {
     point_count=1;
@@ -13,7 +19,7 @@ void Black_Check_Reset(void)
 }
 
 /**
- * @brief 黑白线转换 亮RGB灯,并记录次数，可根据次数停车
+ * @brief 黑白线转换 亮RGB灯,并记录次数(point_count)，可根据次数停车
  * @param num 第几个点停下，初始为第一个点，即point_count=1，当num=point_count时停下
  */
 void Black_Check(uint8_t num)
@@ -23,7 +29,7 @@ void Black_Check(uint8_t num)
 	deal_IRdata(&x1,&x2,&x3,&x4,&x5,&x6,&x7,&x8);
     
     //is_black：是否在黑线上
-    uint8_t is_black = (x1==0 || x2==0 ||x3==0 ||x4==0 ||x5==0 ||x6==0 ||x7==0 ||x8==0 ) ? BLACK_LINE : WHITE_LINE;
+    is_black = (x1==0 || x2==0 ||x3==0 ||x4==0 ||x5==0 ||x6==0 ||x7==0 ||x8==0 ) ? BLACK_LINE : WHITE_LINE;
 
     //如果黑白线切换了，则进行声光提示（暂时只用RGB灯）
     if(is_black!=last_line)
@@ -52,6 +58,10 @@ void Black_Check(uint8_t num)
     }
 }
 
+uint8_t get_is_black(void)
+{
+    return is_black;
+}
 
 //任务数组进行黑线计数控制
 Task tasks[]=
@@ -88,7 +98,7 @@ void turnByAngle(int8_t direction, float angle)
     delay_ms(50);
     
     // 旋转速度（绝对值，单位 mm/s，对应 Motion_Car_Control 的 V_z 参数）
-    int16_t spin_speed = 800 * direction;   // 200 是速度值，可调整
+    int16_t spin_speed = 800 * direction;   // 800 是速度值，可调整
     
     float target_angle=target_yaw+(direction*angle);
     //环绕修正
@@ -130,7 +140,7 @@ void turnByAngle(int8_t direction, float angle)
     
     // 停止
     Motion_Stop(STOP_BRAKE);
-    target_yaw =target_yaw+(direction*angle)+turn_adjust;         // 更新全局目标航向，更新为初始target_yaw转180度
+    target_yaw =target_yaw+(direction*angle)+turn_adjust;         // 更新全局目标航向
     if (target_yaw > 180.0f)  
     {
         target_yaw -= 360.0f;

@@ -678,3 +678,28 @@ void OLED_ShowString_Center(uint8_t line, const char *str, uint8_t mode, bool cl
     uint8_t start_col = (MAX_COL - len) / 2;
     OLED_ShowString_Grid(line, start_col, str, mode, clear_line, refresh);
 }
+
+/**
+ * @brief 清除指定行（页）的所有像素
+ * @param line 行号 (1~4)，对应 OLED 的页 0~3
+ * @note 清除后自动刷新显存
+ */
+void OLED_ClearLine(u8 line)
+{
+    u8 page, col;
+    
+    // 参数检查：行号范围 1~4
+    if (line < 1 || line > 4) {
+        return;
+    }
+    
+    page = line - 1;   // 转换为页索引 (0~3)
+    
+    // 将该页的所有列（0~127）清零
+    for (col = 0; col < 128; col++) {
+        OLED_GRAM[col][page] = 0;
+    }
+    
+    // 刷新显示
+    OLED_Refresh();
+}

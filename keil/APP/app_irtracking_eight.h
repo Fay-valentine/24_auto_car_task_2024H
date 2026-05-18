@@ -14,6 +14,7 @@
 extern int g_IR_track_speed;
 extern float g_yaw_drift_rate;
 
+void IR_PID_Reset(void);
 void LineWalking(void);
 int LineCheck(void);
 void deal_IRdata(u8 *x1,u8 *x2,u8 *x3,u8 *x4,u8 *x5,u8 *x6,u8 *x7,u8 *x8);

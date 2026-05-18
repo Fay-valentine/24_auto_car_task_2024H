@@ -22,7 +22,7 @@ void TIMER_20ms_INST_IRQHandler(void)
 		Encoder_Update();//编码器更新
         Motion_Handle(); //小车驱动
         gled_cnt++;
-        if(gled_cnt>=20)//400ms
+        if(gled_cnt>=20)//400ms，用于查看定时器是否在运行
         {
             gled_cnt=0;
             DL_GPIO_togglePins(LED_PORT,LED_MCU_PIN);

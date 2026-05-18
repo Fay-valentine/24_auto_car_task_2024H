@@ -6,7 +6,7 @@
 
 
 
-extern volatile float pitch,roll,yaw;   
+extern volatile float pitch,roll,yaw;//全局可访问的欧拉角变量
 
 extern volatile short angle[3];
 extern volatile short accel[3];
