@@ -49,6 +49,7 @@
 #include "Mode1.h"
 #include "Mode2.h"
 #include "Mode3.h"
+#include "Mode4.h"
 #include "Global.h"
 
 #endif

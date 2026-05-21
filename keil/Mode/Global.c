@@ -1,6 +1,4 @@
-#include "AllHeader.h"
 #include "Global.h"
-
 uint8_t KeyNum;
 extern uint8_t Next_Mode;//在main中定义的
 volatile uint8_t Mode_Loop_flag=0;
@@ -20,17 +18,41 @@ void Global_Loop(void)
 	{
 		Next_Mode++;
 		OLED_ShowNum_Grid(1,5,Next_Mode,1,1,0,1);//刷新模式显示
-		if(Next_Mode>4)
+		if(Next_Mode>Mode4)
 		{
-			Next_Mode=0;//切回模式1
+			Next_Mode=-1;//切回模式1
 		}
 	}
+
+    if(Mode_Loop_flag)
+    {
+        //10ms以上轮询,判断是否在黑线上
+	    static uint32_t last_black_time = 0;
+	    if (Get_Time() - last_black_time >= 10) 
+	    {
+	        Black_Check(Stop_Num);
+	        last_black_time = Get_Time();
+	    }
+    }
+    
+
 	static uint32_t last_oled = 0;
-	//低频刷新yaw值,200ms
+	//低频刷新,200ms
     if (Get_Time() - last_oled > 200)
     {
-        //OLED_ShowSNum_Grid(2,4,yaw,4,1,0,0);//刷新yaw
-        OLED_ShowSNum_Grid(4,12,point_count,4,1,0,1);//刷新point_count
+        // 显示 8 位数据
+        sprintf(oledbuf, "%d%d%d%d%d%d%d%d", 
+            IR_Data_Number[0], IR_Data_Number[1],
+            IR_Data_Number[2], IR_Data_Number[3],
+            IR_Data_Number[4], IR_Data_Number[5],
+            IR_Data_Number[6], IR_Data_Number[7]);
+        OLED_ShowString_Grid(2, 3, (char*)oledbuf, 1, 0, 1);//刷新IR数据
+
+        OLED_ShowSNum_Grid(3,16,yaw,4,1,0,0);//刷新yaw
+
+        OLED_ShowNum_Grid(4,6,point_count,1,1,0,1);//刷新point_count
+        OLED_ShowNum_Grid(4,17,get_is_black(),1,1,0,1);//刷新黑线flag
+		
         last_oled = Get_Time();
     }
 }

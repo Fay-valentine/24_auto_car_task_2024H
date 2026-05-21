@@ -26,6 +26,7 @@ void YawPID_Init(YawPID_t *pid, float kp, float ki, float kd,
                  float integral_limit, float output_limit);
               
 void Yaw_Unlock(void);                 
+void Yaw_Lock(void);                 
 void StraightLineWalk_IMU_Reset(void);                 
 void StraightLineWalk_IMU_Init(void);
 void StraightLineWalk_IMU(void);

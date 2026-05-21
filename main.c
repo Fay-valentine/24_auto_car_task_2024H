@@ -32,12 +32,12 @@
 
 #include "AllHeader.h"
 
-uint8_t Cur_Mode=0,Next_Mode=0;
+int8_t Cur_Mode=0,Next_Mode=0;
 
 //OLED显示：
 //1行：模式	 停车点  循环flag
-//2行：模式初始化显示
-//3行：模式退出显示
+//2行：八路红外的8路状态
+//3行：target_yaw和cur_yaw
 //4行：point_count
 
 int main(void)
@@ -49,9 +49,14 @@ int main(void)
 	OLED_ShowString_Grid(1,0,"Mode:",1,1,1);
 	OLED_ShowNum_Grid(1,5,Next_Mode,1,1,0,1);
 
-    //OLED_ShowString_Grid(2,0,"yaw:",1,1,1);//原始yaw
-    //OLED_ShowString_Grid(3,0,"target_yaw:",1,1,1);//目标yaw
-    OLED_ShowString_Grid(4,0,"point_count:",1,1,1);//目标yaw
+	OLED_ShowString_Grid(2,0,"IR:",1,1,1);//八路红外的8路状态
+
+	OLED_ShowString_Grid(3,0,"t_yaw:",1,1,1);//目标yaw
+    OLED_ShowString_Grid(3,12,"yaw:",1,0,1);//原始yaw
+    
+    OLED_ShowString_Grid(4,0,"point:",1,1,1);//点数
+    OLED_ShowString_Grid(4,9,"black_f:",1,0,1);//黑线flag
+
 	while(1)
 	{
 		Global_Loop();
@@ -62,6 +67,7 @@ int main(void)
 			case 1:Mode1_Loop();break;
 			case 2:Mode2_Loop();break;
 			case 3:Mode3_Loop();break;
+			case 4:Mode4_Loop();break;
 			}
 		}
 		if(Cur_Mode!=Next_Mode && Key2_is_Press()==KEY_PRESS)//进行模式切换
@@ -71,12 +77,14 @@ int main(void)
 			case 1:Mode1_Exit();break;
 			case 2:Mode2_Exit();break;
 			case 3:Mode3_Exit();break;
+			case 4:Mode4_Exit();break;
 			}
 			switch(Next_Mode)
 			{
 			case 1:Mode1_Init();break;
 			case 2:Mode2_Init();break;
 			case 3:Mode3_Init();break;
+			case 4:Mode4_Init();break;
 			}
 			Cur_Mode=Next_Mode;
 		}

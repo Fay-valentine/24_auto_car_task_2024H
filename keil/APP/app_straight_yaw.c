@@ -107,7 +107,7 @@ void StraightLineWalk_IMU_Reset(void)
 {
     //yaw_locked = 0;   // 清空锁定标志
     // PID 积分也可以清零（可选）
-    //Yaw_lock();不解锁采样
+    //Yaw_lock();//不解锁采样
     yaw_pid.integral = 0;
     PID_Clear_Motor(MAX_MOTOR);   // 清零两个电机的积分和输出
 }
@@ -115,6 +115,11 @@ void StraightLineWalk_IMU_Reset(void)
 void Yaw_Unlock(void)
 {
     yaw_locked = 0;   // 清空锁定标志
+}
+
+void Yaw_Lock(void)
+{
+    yaw_locked = 1;   // 锁定朝向
 }
 
 void StraightLineWalk_IMU_Init(void)
@@ -154,7 +159,7 @@ void StraightLineWalk_IMU(void)
         }
         target_yaw = sum_raw / 40.0f;
         yaw_locked = 1;
-        //OLED_ShowSNum_Grid(3,11,target_yaw,4,1,0,1);//更新显示一次target_yaw
+        OLED_ShowSNum_Grid(3,6,target_yaw,4,1,0,1);//更新显示一次target_yaw
         return;//进行下一次周期，防止current_yaw未更新
     }
 

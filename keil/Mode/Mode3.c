@@ -2,13 +2,17 @@
 #include "AllHeader.h"
 
 /*模式3*/
-
 #define POINT_A      1
 #define POINT_C      2   //先到达C点，再到B点
 #define POINT_B      3
 #define POINT_D      4
 
+static uint8_t turn_flag_A=0;//是否右转39°  1：已转  0：未转
+static uint8_t turn_flag_C=0;//是否左转39°  1：已转  0：未转
+static uint8_t turn_flag_B=0;//是否左转39°  1：已转  0：未转
+static uint8_t turn_flag_D=0;//是否右转39°  1：已转  0：未转
 uint8_t Black_Flag=0;//是否在黑线上  1：在  0：不在
+
 void Mode3_Init(void)
 {
 	g_IR_track_speed=250;		//设置速度
@@ -17,14 +21,9 @@ void Mode3_Init(void)
 	//显示相应信息
 	OLED_ShowNum_Grid(1,15,Mode_Loop_flag,1,1,0,1);     //显示循环开启flag
 	OLED_ShowNum_Grid(1,10,Stop_Num,1,1,0,1);           //显示停车点
-	OLED_ShowString_Grid(2,0,"Mode3_Init",1,0,1);       //显示初始化信息
+	//OLED_ShowString_Grid(2,0,"Mode3_Init",1,0,1);       //显示初始化信息
 	
 }
-
-static uint8_t turn_flag_A=0;//是否右转39°  1：已转  0：未转
-static uint8_t turn_flag_C=0;//是否左转39°  1：已转  0：未转
-static uint8_t turn_flag_B=0;//是否左转39°  1：已转  0：未转
-static uint8_t turn_flag_D=0;//是否右转39°  1：已转  0：未转
 
 //轨迹：A->C->B->D->A2
 void Mode3_Loop(void)
@@ -86,13 +85,6 @@ void Mode3_Loop(void)
             }
 		}
 
-		//10ms以上轮询,判断是否在黑线上
-		static uint32_t last_black_time = 0;
-		if (Get_Time() - last_black_time >= 10) 
-		{
-		    Black_Check(Stop_Num);
-		    last_black_time = Get_Time();
-		}
 	}
 
 	
@@ -113,6 +105,7 @@ void Mode3_Exit(void)
 	turn_flag_D=0;
 	Motion_Stop(STOP_BRAKE);		//优先刹车
     StraightLineWalk_IMU_Reset();	//重置直行函数
+	Yaw_Unlock();//解锁朝向
 	Black_Check_Reset();			//重置黑线判断
-	OLED_ShowString_Grid(3,0,"Mode3_Exit",1,0,1);//显示退出信息
+	//OLED_ShowString_Grid(3,0,"Mode3_Exit",1,0,1);//显示退出信息
 }

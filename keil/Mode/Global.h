@@ -1,14 +1,16 @@
 #ifndef _GLOBAL_H
 #define _GLOBAL_H
-
+#include "AllHeader.h"
 extern volatile uint8_t Mode_Loop_flag;//进入某个模式的标志位，比如进入mode1_loop
 
 //注意模式对应的枚举值
 typedef enum
 {
+    Mode0=0,
     Mode1=1,
     Mode2=2,
     Mode3=3,
+    Mode4=4,
 }Mode;
 
 void Global_Init(void);

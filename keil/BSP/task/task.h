@@ -9,6 +9,7 @@
 extern uint8_t point_count;
 extern volatile int8_t turn_adjust;
 extern volatile int Stop_Num;
+extern uint8_t is_black_flag;
 typedef void(*TaskFunc)(uint8_t arg);// 定义统一的函数指针类型
 
 //任务结构体
