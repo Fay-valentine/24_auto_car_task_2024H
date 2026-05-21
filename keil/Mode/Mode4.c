@@ -47,8 +47,12 @@ void Mode4_Loop(void)
 	if(Mode_Loop_flag)//只有在初始化设置了 循环开启flag 为1时 才执行循环Loop
 	{
         Black_Flag=get_is_black();//检测是否在黑线上
+
 		if(g_IR_track_speed!=0)
 		{
+
+			
+
 			switch (point_count)
     		{
     		case POINT_A://右转39°
@@ -100,14 +104,7 @@ void Mode4_Loop(void)
     		    break;
     		}
 
-            if(Black_Flag==0)//不在黑线上
-            {
-                StraightLineWalk_IMU();//直行
-            }
-            else//在黑线上
-            {
-                LineWalking();//循迹
-            }
+            
 		}
 	}
 

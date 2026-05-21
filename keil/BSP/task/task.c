@@ -124,12 +124,11 @@ void turnByAngle(int8_t direction, float angle)
     // 停止当前运动
     Motion_Stop(STOP_BRAKE);
     delay_ms(50);
-    
+
     // 旋转速度（绝对值，单位 mm/s，对应 Motion_Car_Control 的 V_z 参数）
     int16_t spin_speed = 800 * direction;   // 800 是速度值，可调整
     
-    float target_angle=target_yaw+(direction*angle);
-    //环绕修正
+    float target_angle=target_yaw-(direction*angle);
     if (target_angle > 180.0f)  
     {
         target_angle -= 360.0f;
@@ -168,7 +167,7 @@ void turnByAngle(int8_t direction, float angle)
     
     // 停止
     Motion_Stop(STOP_BRAKE);
-    target_yaw =target_yaw+(direction*angle)+turn_adjust;         // 更新全局目标航向
+    target_yaw = target_angle + turn_adjust;
     if (target_yaw > 180.0f)  
     {
         target_yaw -= 360.0f;
@@ -177,6 +176,6 @@ void turnByAngle(int8_t direction, float angle)
     {
         target_yaw += 360.0f;
     }
-    OLED_ShowSNum_Grid(3,11,target_yaw,4,1,0,1);//更新显示一次target_yaw
+    OLED_ShowSNum_Grid(3,6,target_yaw,4,1,0,1);//更新显示一次target_yaw
     StraightLineWalk_IMU_Reset();         // 下次直行重新锁定
 }

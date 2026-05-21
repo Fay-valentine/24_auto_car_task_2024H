@@ -136,16 +136,9 @@ void StraightLineWalk_IMU_Init(void)
     yaw_locked = 0;
 }
 
-/**
- * @brief 陀螺仪走直线，包括启动前的100ms采样
- * 
- */
-float Vz_Bias = 10.0f;  //转向偏差值，来克服左右轮差距
-void StraightLineWalk_IMU(void)
-{
-    mpu_dmp_get_data(&pitch, &roll, &yaw);
-    float current_yaw=get_filtered_yaw();//获取滤波，补偿后的航向
 
+void Yaw_sample(void)
+{
     //采样
     if (yaw_locked == 0)
     {
@@ -160,8 +153,18 @@ void StraightLineWalk_IMU(void)
         target_yaw = sum_raw / 40.0f;
         yaw_locked = 1;
         OLED_ShowSNum_Grid(3,6,target_yaw,4,1,0,1);//更新显示一次target_yaw
-        return;//进行下一次周期，防止current_yaw未更新
     }
+}
+
+/**
+ * @brief 陀螺仪走直线，包括启动前的100ms采样
+ * 
+ */
+float Vz_Bias = 10.0f;  //转向偏差值，来克服左右轮差距
+void StraightLineWalk_IMU(void)
+{
+    mpu_dmp_get_data(&pitch, &roll, &yaw);
+    float current_yaw=get_filtered_yaw();//获取滤波，补偿后的航向
 
     //计算误差
     float error=target_yaw-current_yaw;
