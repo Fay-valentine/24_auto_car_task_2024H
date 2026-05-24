@@ -3,7 +3,7 @@
 
 //按键是非阻塞式的，在运行中按下，也可切换模式
 //按键1用来切换模式，按一下，模式+1
-#include "AllHeader.h"
+#include "std_types.h"
 
 
 #define KEY_PRESS      1

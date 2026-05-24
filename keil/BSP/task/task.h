@@ -1,7 +1,7 @@
 #ifndef __TASK_H__
 #define __TASK_H__
 
-#include "bsp.h"
+#include "std_types.h"
 
 #define BLACK_LINE      1
 #define WHITE_LINE      0

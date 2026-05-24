@@ -1,4 +1,3 @@
-#include "Mode2.h"
 #include "AllHeader.h"
 
 /*模式2*/

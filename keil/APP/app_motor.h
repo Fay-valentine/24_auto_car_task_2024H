@@ -3,18 +3,18 @@
 
 
 
-#include "AllHeader.h"
+#include "std_types.h"
 
-// 450RPMµç»ú£¬ÂÖ×Ó×ªÒ»ÕûÈ¦£¬±àÂëÆ÷»ñµÃµÄÂö³åÊý=¼õËÙ±È*ÂëÅÌÏßÊý*±àÂëÆ÷Âö³å£¨45*13*4£©
+// 450RPMï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ªÒ»ï¿½ï¿½È¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½=ï¿½ï¿½ï¿½Ù±ï¿½*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½å£¨45*13*4ï¿½ï¿½
 #define ENCODER_CIRCLE_450 (1170.0f)
 
-// Half of the sum of the distances between the car chassis motors Ð¡³µµ×ÅÌµç»ú¼ä¾àÖ®ºÍµÄÒ»°ë
+// Half of the sum of the distances between the car chassis motors Ð¡ï¿½ï¿½ï¿½ï¿½ï¿½Ìµï¿½ï¿½ï¿½ï¿½ï¿½Ö®ï¿½Íµï¿½Ò»ï¿½ï¿½
 #define MSPM0Car_APB (157.09f) //(143.8+170.38)/2
 
-// The displacement of a wheel in one complete revolution, measured in meters ÂÖ×Ó×ªÒ»ÕûÈ¦µÄÎ»ÒÆ£¬µ¥Î»ÎªÃ×
+// The displacement of a wheel in one complete revolution, measured in meters ï¿½ï¿½ï¿½ï¿½×ªÒ»ï¿½ï¿½È¦ï¿½ï¿½Î»ï¿½Æ£ï¿½ï¿½ï¿½Î»Îªï¿½ï¿½
 #define MECANUM_CIRCLE_MM (210.486f)
 
-// Í£Ö¹Ä£Ê½£¬STOP_FREE±íÊ¾×ÔÓÉÍ£Ö¹£¬STOP_BRAKE±íÊ¾É²³µ¡£
+// Í£Ö¹Ä£Ê½ï¿½ï¿½STOP_FREEï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½Í£Ö¹ï¿½ï¿½STOP_BRAKEï¿½ï¿½Ê¾É²ï¿½ï¿½ï¿½ï¿½
 //Stop mode, STOP_ FREE stands for free stop, STOP_ BRAKE stands for braking.
 typedef enum _stop_mode
 {
@@ -43,10 +43,10 @@ typedef struct _car_data
     int16_t Vz;
 } car_data_t;
 void Motors_Init(void);
-void Motion_Stop(uint8_t brake);//É²³µ
-void Motion_Get_Motor_Speed(float *speed);//»ñÈ¡ÎïÀíËÙ¶È
-void Motion_Handle(void);//task¶¨Ê±µ÷ÓÃ
-void wheel_State(uint8_t state, uint16_t speed);//ÔË¶¯·½Ê½
+void Motion_Stop(uint8_t brake);//É²ï¿½ï¿½
+void Motion_Get_Motor_Speed(float *speed);//ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶ï¿½
+void Motion_Handle(void);//taskï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½
+void wheel_State(uint8_t state, uint16_t speed);//ï¿½Ë¶ï¿½ï¿½ï¿½Ê½
 void *Motion_Get_Data(uint8_t index);
 void Motion_Set_Speed(int16_t speed_m1, int16_t speed_m2);//mm/s
 

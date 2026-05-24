@@ -1,7 +1,7 @@
 #ifndef __BSP_ENCODER_H__
 #define __BSP_ENCODER_H__
 
-#include "AllHeader.h"
+
 
 extern int Encoder_L;
 extern int Encoder_R;

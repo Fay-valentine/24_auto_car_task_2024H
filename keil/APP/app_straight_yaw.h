@@ -1,7 +1,7 @@
 #ifndef _APP_STRAIGHT_YAW_H
 #define _APP_STRAIGHT_YAW_H
 
-#include "AllHeader.h"
+
 
 extern float Vz_Bias;
 extern volatile float target_yaw;

@@ -1,7 +1,8 @@
 #ifndef _BSP_MPU6050_H_
 #define _BSP_MPU6050_H_
 
-#include "AllHeader.h"
+#include "std_types.h"
+#include "ti_msp_dl_config.h"
 
 // 设置SDA为输出模式
 //需要使用引脚复用，将引脚设置为数字输出模式

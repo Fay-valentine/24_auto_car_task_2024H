@@ -1,4 +1,5 @@
 #include "app_irtracking_eight.h"
+#include "AllHeader.h"
 
 
 #define IRTrack_Trun_KP (200)

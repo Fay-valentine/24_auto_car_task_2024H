@@ -1,7 +1,7 @@
 #ifndef __BSP_PID_MOTOR_H
 #define __BSP_PID_MOTOR_H
 
-#include "bsp.h"
+#include "std_types.h"
 
 #define PI (3.1415926f)
 

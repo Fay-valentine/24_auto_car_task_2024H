@@ -1,4 +1,5 @@
 #include "ti_msp_dl_config.h"
+#include "AllHeader.h"
 
 #define DELAY_SELECT 1
 volatile unsigned int delay_times = 0;
@@ -17,13 +18,13 @@ void delay_ms(unsigned int ms)
 }
 
 #elif DELAY_SELECT==1
-//通过systick轮询读取来实现延时 
+//通锟斤拷systick锟斤拷询锟斤拷取锟斤拷实锟斤拷锟斤拷时 
 void delay_us(unsigned long __us) 
 {
     uint32_t ticks;
     uint32_t told, tnow, tcnt = 0;
 
-    ticks = __us * (80000000 / 1000000);  // 80MHz 时钟  
+    ticks = __us * (80000000 / 1000000);  // 80MHz 时锟斤拷  
     told = SysTick->VAL;
 
     while (1)
@@ -42,16 +43,16 @@ void delay_us(unsigned long __us)
         }
     }
 }
-//搭配滴答定时器实现的精确ms延时 
+//锟斤拷锟斤拷未锟绞憋拷锟绞碉拷值木锟饺穖s锟斤拷时 
 void delay_ms(unsigned long ms) 
 {
     while (ms--)
     {
-        delay_us(1000);  // 每次延时 1ms
+        delay_us(1000);  // 每锟斤拷锟斤拷时 1ms
     }
 }
 #else
-//通过systick中断实现延时 需要在sysconfig中打开systick中断  
+//通锟斤拷systick锟叫讹拷实锟斤拷锟斤拷时 锟斤拷要锟斤拷sysconfig锟叫达拷systick锟叫讹拷  
 void delay_ms(unsigned int ms)
 {
     delay_times=ms;

@@ -1,4 +1,3 @@
-#include "Mode4.h"
 #include "AllHeader.h"
 
 /*模式4*/
@@ -50,8 +49,6 @@ void Mode4_Loop(void)
 
 		if(g_IR_track_speed!=0)
 		{
-
-			
 
 			switch (point_count)
     		{

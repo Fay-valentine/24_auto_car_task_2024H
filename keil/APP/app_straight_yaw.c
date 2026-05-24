@@ -1,4 +1,5 @@
 #include "app_straight_yaw.h"
+#include "AllHeader.h"
 
 static YawPID_t yaw_pid;
 volatile float target_yaw = 0.0f;         // 锁定的目标航向

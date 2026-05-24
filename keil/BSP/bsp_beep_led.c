@@ -1,34 +1,35 @@
 #include "bsp_beep_led.h"
+#include "AllHeader.h"
 
 
 /**
- * @brief ´ò¿ªMCUÖ¸Ê¾µÆ  Turn on MCU indicator LED
+ * @brief ï¿½ï¿½MCUÖ¸Ê¾ï¿½ï¿½  Turn on MCU indicator LED
  */
 void OPEN_MCULED(void)
 {
-    DL_GPIO_setPins(LED_PORT, LED_MCU_PIN);  // ÖÃÎ»LEDÒý½Å  Set LED pin
+    DL_GPIO_setPins(LED_PORT, LED_MCU_PIN);  // ï¿½ï¿½Î»LEDï¿½ï¿½ï¿½ï¿½  Set LED pin
 }
 
 /**
- * @brief ¹Ø±ÕMCUÖ¸Ê¾µÆ / Turn off MCU indicator LED
+ * @brief ï¿½Ø±ï¿½MCUÖ¸Ê¾ï¿½ï¿½ / Turn off MCU indicator LED
  */
 void CLOSE_MCULED(void)
 {
-    DL_GPIO_clearPins(LED_PORT, LED_MCU_PIN);  // Çå³ýLEDÒý½Å  Clear LED pin
+    DL_GPIO_clearPins(LED_PORT, LED_MCU_PIN);  // ï¿½ï¿½ï¿½LEDï¿½ï¿½ï¿½ï¿½  Clear LED pin
 }
 
 /**
- * @brief ´ò¿ª·äÃùÆ÷  Turn on buzzer
+ * @brief ï¿½ò¿ª·ï¿½ï¿½ï¿½ï¿½ï¿½  Turn on buzzer
  */
 void Buzzer_open_state(void)
 {
-    DL_GPIO_setPins(BEEP_PORT, BEEP_Buzzer_PIN);  // ÖÃÎ»·äÃùÆ÷Òý½Å  Set buzzer pin
+    DL_GPIO_setPins(BEEP_PORT, BEEP_Buzzer_PIN);  // ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  Set buzzer pin
 }
 
 /**
- * @brief ¹Ø±Õ·äÃùÆ÷ / Turn off buzzer
+ * @brief ï¿½Ø±Õ·ï¿½ï¿½ï¿½ï¿½ï¿½ / Turn off buzzer
  */
 void Buzzer_close_state(void)
 {
-    DL_GPIO_clearPins(BEEP_PORT, BEEP_Buzzer_PIN);  // Çå³ý·äÃùÆ÷Òý½Å  Clear buzzer pin
+    DL_GPIO_clearPins(BEEP_PORT, BEEP_Buzzer_PIN);  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  Clear buzzer pin
 }

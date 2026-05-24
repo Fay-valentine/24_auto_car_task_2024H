@@ -1,4 +1,5 @@
 #include "bsp_ultrasonic.h"
+#include "AllHeader.h"
 
 volatile uint32_t msHcCount=0;//系统时基，1ms自增1
 volatile uint32_t systick_counter = 0; // 另一个计数器（预留）

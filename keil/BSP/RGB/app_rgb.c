@@ -1,22 +1,23 @@
 #include "app_rgb.h"
+#include "AllHeader.h"
 
-//RGB¼òµ¥µÆÐ§
+//RGBï¿½òµ¥µï¿½Ð§
 
 #define 	Red_ON     1
 #define 	Red_OFF     0
 
 uint8_t RGB_flag ;
 uint8_t RGB_On=0;
-uint16_t RGB_Count=0;//µ¥Î»£º1ms
+uint16_t RGB_Count=0;//ï¿½ï¿½Î»ï¿½ï¿½1ms
 
-//#define 	Red_RGB     '2'//°´¼üÇ° Before pressing the button
-//#define 	Green_RGB    '3'//°´¼üºó After pressing the button
-//#define 	Blue_RGB    '4'//°´¼ü×ó Left button
-////#define 	Yellow_RGB   '4'//°´¼üÓÒ Right button
-////#define 	Cyan_RGB    '5'//°´¼üÍ£ Button stop
-//#define 	OFF    '8'//°´¼üÍ£ Button stop
+//#define 	Red_RGB     '2'//ï¿½ï¿½ï¿½ï¿½Ç° Before pressing the button
+//#define 	Green_RGB    '3'//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ After pressing the button
+//#define 	Blue_RGB    '4'//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Left button
+////#define 	Yellow_RGB   '4'//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Right button
+////#define 	Cyan_RGB    '5'//ï¿½ï¿½ï¿½ï¿½Í£ Button stop
+//#define 	OFF    '8'//ï¿½ï¿½ï¿½ï¿½Í£ Button stop
 
-extern uint8_t ProtocolString[80];//ÒýÈë±¸·ÝÊý¾ÝÇø Introducing backup data area
+extern uint8_t ProtocolString[80];//ï¿½ï¿½ï¿½ë±¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Introducing backup data area
 static void set_ALL_RGB_COLOR(unsigned long color)
 {
     rgb_SetColor(Left_RGB,color);
@@ -24,9 +25,9 @@ static void set_ALL_RGB_COLOR(unsigned long color)
 }
 
 /**
- * @brief ´ò¿ªRGB£¬ÉèÖÃRGB_On±êÖ¾Î»£¬²¢¿ªµÆ,ÓÉ¶¨Ê±Æ÷×Ô¶¯¹ØµÆ
- * @param turnOn true:¿ªµÆ
- * @param color ÑÕÉ«
+ * @brief ï¿½ï¿½RGBï¿½ï¿½ï¿½ï¿½ï¿½ï¿½RGB_Onï¿½ï¿½Ö¾Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½É¶ï¿½Ê±ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½Øµï¿½
+ * @param turnOn true:ï¿½ï¿½ï¿½ï¿½
+ * @param color ï¿½ï¿½É«
  */
 void Set_RGB(bool turnOn,RGB_Color_t color)
 {
@@ -34,19 +35,19 @@ void Set_RGB(bool turnOn,RGB_Color_t color)
 	if(turnOn)
 	{
 		RGB_On=1;
-		RGB_Count = 0;          // ÖØÖÃµ¹¼ÆÊ±£¬ÖØÐÂ¿ªÊ¼¼ÆÊ±
-		Control_RGB_ALL(color);//¿ªµÆ
+		RGB_Count = 0;          // ï¿½ï¿½ï¿½Ãµï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Â¿ï¿½Ê¼ï¿½ï¿½Ê±
+		Control_RGB_ALL(color);//ï¿½ï¿½ï¿½ï¿½
 	}
 	else
 	{
 		RGB_On=0;
-		RGB_Count = 0;          // ÖØÖÃµ¹¼ÆÊ±£¬ÖØÐÂ¿ªÊ¼¼ÆÊ±
-		Control_RGB_ALL(OFF);//¹ØµÆ
+		RGB_Count = 0;          // ï¿½ï¿½ï¿½Ãµï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Â¿ï¿½Ê¼ï¿½ï¿½Ê±
+		Control_RGB_ALL(OFF);//ï¿½Øµï¿½
 	}
 }
 
 /**
- * @brief RGB¶¨Ê±Æ÷£¬¿ªÆôºóRGBÁÁÒ»Ãë
+ * @brief RGBï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½RGBï¿½ï¿½Ò»ï¿½ï¿½
  * 
  */
 void RGB_Tick(void)
@@ -56,7 +57,7 @@ void RGB_Tick(void)
 	{
 		RGB_Count++;
 	}
-	if(RGB_Count>=1000)//ÁÁ1s
+	if(RGB_Count>=1000)//ï¿½ï¿½1s
 	{
 		RGB_Count=0;
 		Set_RGB(false,OFF);
@@ -83,7 +84,7 @@ void Control_RGB_ALL(RGB_Color_t color)
         default : return;
         
     }
-    //·¢ËÍ²ÊµÆÊý¾Ý
+    //ï¿½ï¿½ï¿½Í²Êµï¿½ï¿½ï¿½ï¿½ï¿½
     ws2812_send();
     
 }

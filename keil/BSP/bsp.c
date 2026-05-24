@@ -1,4 +1,5 @@
 #include "bsp.h"
+#include "AllHeader.h"
 
 void board_Init(void)//使用串口打印初始化成功
 {

@@ -1,4 +1,5 @@
 #include "Global.h"
+#include "AllHeader.h"
 uint8_t KeyNum;
 extern uint8_t Next_Mode;//在main中定义的
 volatile uint8_t Mode_Loop_flag=0;
@@ -41,7 +42,7 @@ void Global_Loop(void)
     if (Get_Time() - last_oled > 200)
     {
         // 显示 8 位数据
-        sprintf(oledbuf, "%d%d%d%d%d%d%d%d", 
+        sprintf((char*)oledbuf, "%d%d%d%d%d%d%d%d", 
             IR_Data_Number[0], IR_Data_Number[1],
             IR_Data_Number[2], IR_Data_Number[3],
             IR_Data_Number[4], IR_Data_Number[5],

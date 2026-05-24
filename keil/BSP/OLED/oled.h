@@ -1,7 +1,7 @@
 #ifndef __OLED_H
 #define __OLED_H 
 
-#include "AllHeader.h"
+#include "std_types.h"
 
 #ifndef u8
 #define u8 uint8_t
@@ -15,7 +15,7 @@
 #define u32 uint32_t
 #endif
 
-//-----------------OLED¶Ë¿Ú¶¨Òå---------------- 
+//-----------------OLEDï¿½Ë¿Ú¶ï¿½ï¿½ï¿½---------------- 
 
 #define OLED_SCL_Clr() DL_GPIO_clearPins(OLED_PORT,OLED_SCL1_PIN)//SCL
 #define OLED_SCL_Set() DL_GPIO_setPins(OLED_PORT,OLED_SCL1_PIN)
@@ -24,8 +24,8 @@
 #define OLED_SDA_Set() DL_GPIO_setPins(OLED_PORT,OLED_SDA1_PIN)
 
 
-#define OLED_CMD  0	//Ð´ÃüÁî
-#define OLED_DATA 1	//Ð´Êý¾Ý
+#define OLED_CMD  0	//Ð´ï¿½ï¿½ï¿½ï¿½
+#define OLED_DATA 1	//Ð´ï¿½ï¿½ï¿½ï¿½
 
 void OLED_ClearPoint(u8 x,u8 y);
 void OLED_ColorTurn(u8 i);
@@ -54,8 +54,8 @@ void OLED_Init(void);
 
 void OLED_Draw_Line(char *data, uint8_t line, bool clear, bool refresh);
 
-//ÐÐÁÐÏÔÊ¾º¯Êý
-/* ÐÐÁÐÍø¸ñÏÔÊ¾·â×°£¨»ùÓÚ6x8×ÖÌå£© */
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½
+/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½×°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½6x8ï¿½ï¿½ï¿½å£© */
 #define CHAR_WIDTH  6
 #define LINE_HEIGHT 8
 #define MAX_COL     (128 / CHAR_WIDTH)  // 21

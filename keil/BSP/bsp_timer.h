@@ -1,7 +1,7 @@
 #ifndef __BSP_TIMER_H_
 #define __BSP_TIMER_H_
 
-#include "AllHeader.h"
+#include "std_types.h"
 
 void Timer_20ms_Init(void);
 uint32_t Get_Time(void);

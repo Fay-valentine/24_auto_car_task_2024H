@@ -2,14 +2,18 @@
 #define _APP_IRTRACKING_H_
 
 
-#include "AllHeader.h"
+#include "std_types.h"
 
 #define IR_BLACK       0        
 #define IR_WHITE       1       
 
 
+#ifndef u8
 #define u8 uint8_t
+#endif
+#ifndef u16
 #define u16 uint16_t
+#endif
 
 extern int g_IR_track_speed;
 extern float g_yaw_drift_rate;

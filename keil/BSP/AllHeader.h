@@ -2,15 +2,7 @@
 #define __ALLHEADER_H__
 
 
-#define u8  uint8_t
-#define u16 uint16_t 
-#define u32 uint32_t 
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <math.h>
-#include <string.h>
+#include "std_types.h"
 
 #include "ti_msp_dl_config.h"
 #include "config.h"
@@ -45,6 +37,10 @@
 
 #include "bsp_RGB.h"
 #include "app_rgb.h"
+
+#include "bsp.h"
+#include "bsp_beep_led.h"
+#include "bsp_ultrasonic.h"
 
 #include "Mode1.h"
 #include "Mode2.h"

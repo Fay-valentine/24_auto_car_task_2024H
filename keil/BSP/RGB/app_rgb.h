@@ -1,7 +1,7 @@
 #ifndef __APP_RGB_H_
 #define __APP_RGB_H_
 
-#include "AllHeader.h"
+#include "std_types.h"
 
 enum RGB_Light
 {
@@ -29,5 +29,3 @@ void app_color();
 void Set_RGB(bool turnOn,RGB_Color_t color);
 void RGB_Tick(void);
 #endif
-
-

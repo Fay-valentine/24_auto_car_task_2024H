@@ -1,4 +1,5 @@
 #include "bsp_ir_eight.h"
+#include "AllHeader.h"
 
 
 #define RE_0_BUFF_LEN_MAX   200     //最大缓冲区长度
@@ -54,7 +55,7 @@ void IR_DataAnalysis(void)
 	}
 
 	//找到帧头后，buff[head]开始找帧尾 #
-	buff=&IR_recv0_buff[head];
+	buff=(char*)&IR_recv0_buff[head];
 	while(buff[end]!='#' && end<(IR_recv0_length-head))
 	{
 		end++;//注意end从0开始++，最终是buff[end]指向‘#’而不是IR_recv0_buff[end]
@@ -105,7 +106,7 @@ void IR_DataAnalysis(void)
 			}
 			//            // 显示解析结果
             // Display parsing result
-            sprintf(oledbuf, "%d%d%d%d%d%d%d%d",
+            sprintf((char*)oledbuf, "%d%d%d%d%d%d%d%d",
                 IR_Data_Number[0], IR_Data_Number[1],
                 IR_Data_Number[2], IR_Data_Number[3],
                 IR_Data_Number[4], IR_Data_Number[5],
@@ -119,7 +120,7 @@ void IR_DataAnalysis(void)
 	//获取完数据或数据无效后，重置状态
 		IR_recv0_complete_flag=0;
 		IR_recv0_length=0;
-		memset(IR_recv0_buff,0,RE_0_BUFF_LEN_MAX);//重置接收缓冲区数据，防御编程
+		memset((void*)IR_recv0_buff,0,RE_0_BUFF_LEN_MAX);//重置接收缓冲区数据，防御编程
 		__enable_irq();//！！！重新开启中断
 	
 }

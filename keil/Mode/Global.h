@@ -1,6 +1,6 @@
 #ifndef _GLOBAL_H
 #define _GLOBAL_H
-#include "AllHeader.h"
+#include "std_types.h"
 extern volatile uint8_t Mode_Loop_flag;//进入某个模式的标志位，比如进入mode1_loop
 
 //注意模式对应的枚举值

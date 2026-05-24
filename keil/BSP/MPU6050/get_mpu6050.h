@@ -1,7 +1,7 @@
 #ifndef	_APP_MPU6050_H_
 #define _APP_MPU6050_H_
 
-#include "AllHeader.h"
+
 #include "bsp_mpu6050.h"
 
 

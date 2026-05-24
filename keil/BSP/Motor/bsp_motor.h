@@ -1,6 +1,6 @@
 #ifndef __BSP_MOTOR_H__
 #define __BSP_MOTOR_H__
-#include "AllHeader.h"
+#include "std_types.h"
 #define MOTOR_DEAD_ZONE (75)//死区补偿值
 #define MAX_SPEED   (850)//占空比为1000，设置占空比上限
 

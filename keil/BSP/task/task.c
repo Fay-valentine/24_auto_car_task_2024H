@@ -1,4 +1,5 @@
 #include "task.h"
+#include "AllHeader.h"
 
 extern uint8_t Cur_Mode;//在main中定义的
 

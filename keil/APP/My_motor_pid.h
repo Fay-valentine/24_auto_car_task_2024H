@@ -1,14 +1,14 @@
 #ifndef _MY_MOTOR_PID_H_
 #define _MY_MOTOR_PID_H_
-#include"AllHeader.h"
+#include "std_types.h"
 
 #define MOTOR_NUM   2
 
-#define PID_KP (0.8f) //0.8
-#define PID_KI (0.06f) //0.06
-#define PID_KD (0.5f) //0.5
+#define PID_MOTOR_KP (0.8f) //0.8
+#define PID_MOTOR_KI (0.06f) //0.06
+#define PID_MOTOR_KD (0.5f) //0.5
 
-
+#define G_SPEED 250     //全局速度
 
 //增量式pid结构体
 typedef struct Motor_PID

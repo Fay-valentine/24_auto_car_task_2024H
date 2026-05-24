@@ -1,4 +1,5 @@
 #include "get_mpu6050.h"
+#include "AllHeader.h"
 
 #define Pi 3.14159265
 volatile short angle[3];
@@ -18,7 +19,9 @@ void Get_EulerAngles(void)
 	
 	static int a;
     //获取欧拉角 Get Euler angles
-	mpu_dmp_get_data(&pitch,&roll,&yaw);
+	float p, r, y;
+	mpu_dmp_get_data(&p, &r, &y);
+	pitch = p; roll = r; yaw = y;
 	//MPU6050ReadGyro(&gyrox,&gyroy,&gyroz);	//陀螺仪
 	//MPU6050ReadAcc(&aacx,&aacy,&aacz);
 	
