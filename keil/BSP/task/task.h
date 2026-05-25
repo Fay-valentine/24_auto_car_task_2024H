@@ -31,5 +31,6 @@ uint8_t get_is_black(void);
 void Schedule_Run(void);
 uint8_t turnByAngle(struct YawPID_t *pid,int8_t direction, float angle);
 uint8_t turnByAngle_IsBusy(void);
+void turnByAngle_Reset(void);
 
 #endif

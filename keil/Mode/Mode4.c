@@ -30,7 +30,7 @@ void state_reset(void)
 
 void Mode4_Init(void)
 {
-	g_IR_track_speed=250;		//设置速度
+	g_speed=250;		//设置速度
 	Mode_Loop_flag=1;			//循环开启flag
 	Stop_Num=13;					//在第5个点停车，即第二次的A点
 	sampleYaw(&yaw_pid);//采样一次目标航向角
@@ -48,7 +48,7 @@ void Mode4_Loop(void)
 	{
         Black_Flag=get_is_black();//检测是否在黑线上
 
-		if(g_IR_track_speed!=0)
+		if(g_speed!=0)
 		{
 
 			switch (point_count)
@@ -138,10 +138,11 @@ void Mode4_Exit(void)
 {
     Mode_Loop_flag=0;               //关闭循环flag
 	Stop_Num=0;                     //清零停车点
-    g_IR_track_speed = 0;   		//清零目标速度
+    g_speed = 0;   		//清零目标速度
 	Motion_Stop(STOP_BRAKE);		//优先刹车
     walkStraight_Yaw_Reset(&yaw_pid);	//重置直行函数
 	YawPID_Unlock(&yaw_pid);//解锁朝向
 	Black_Check_Reset();			//重置黑线判断
+	turnByAngle_Reset();            //重置转向状态机
 	//OLED_ShowString_Grid(3,0,"Mode4_Exit",1,0,1);//显示退出信息
 }

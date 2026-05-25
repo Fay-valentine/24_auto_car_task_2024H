@@ -19,6 +19,7 @@ uint8_t is_black_flag=0;//是否在黑线上
 void Black_Check_Reset(void)
 {
     is_black_flag=0;//重置黑线标志位
+    is_black_count=0;//重置黑线消抖计数器
     point_count=1;
     last_line=WHITE_LINE;
 }
@@ -130,6 +131,11 @@ uint8_t turnByAngle_IsBusy(void)
     return (turn_state != TURN_STATE_IDLE);
 }
 
+void turnByAngle_Reset(void)
+{
+    turn_state = TURN_STATE_IDLE;
+}
+
 /**
  * @brief 掉头函数（非阻塞版本）
  * @param direction 1: 顺时针右转掉头, -1: 逆时针左转掉头
@@ -143,7 +149,6 @@ uint8_t turnByAngle(struct YawPID_t *pid,int8_t direction, float angle)
     {
     case TURN_STATE_IDLE://空闲状态
         Motion_Stop(STOP_BRAKE);//优先刹车,等会再加直行函数的重置
-        walkStraight_Yaw_Reset(pid);//重置直行函数
 
         turn_target_angle = YawPID_GetTarget(pid) - (direction * angle);//计算目标角度
         Wrap_Process(&turn_target_angle);//环绕处理
@@ -171,7 +176,6 @@ uint8_t turnByAngle(struct YawPID_t *pid,int8_t direction, float angle)
         if (fabs(diff) < 8.0f)
         {
             Motion_Stop(STOP_BRAKE);
-            walkStraight_Yaw_Reset(pid);//重置直行函数
             pid->target = turn_target_angle + turn_adjust;//设置目标角度
             Wrap_Process(&pid->target);
             OLED_ShowSNum_Grid(3, 6, pid->target, 4, 1, 0, 1);

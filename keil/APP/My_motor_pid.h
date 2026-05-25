@@ -8,7 +8,7 @@
 #define PID_MOTOR_KI (0.06f) //0.06
 #define PID_MOTOR_KD (0.5f) //0.5
 
-#define G_SPEED 250     //全局速度
+extern int g_speed;
 
 //增量式pid结构体
 typedef struct Motor_PID

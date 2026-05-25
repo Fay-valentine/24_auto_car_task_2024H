@@ -94,8 +94,6 @@ uint8_t Motion_Get_Yaw_Adjust(void)
 void Motion_Stop(uint8_t brake)
 {
     Motion_Set_Speed(0, 0);
-    g_start_ctrl = 0;
-    g_yaw_adjust = 0;
     Motor_PID_Reset(&motor_pid[0]);
     Motor_PID_Reset(&motor_pid[1]);
     Motor_Stop(brake);

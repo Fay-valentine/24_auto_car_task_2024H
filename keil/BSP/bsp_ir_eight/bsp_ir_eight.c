@@ -4,7 +4,7 @@
 
 #define RE_0_BUFF_LEN_MAX   200     //最大缓冲区长度
 
-volatile uint8_t IR_Data_Number[IR_NUM];//存储红外传感器的数据 0 or 1
+volatile uint8_t IR_Data_Number[IR_NUM]={1,1,1,1,1,1,1,1};//存储红外传感器的数据 0 or 1
 volatile uint8_t  IR_recv0_buff[RE_0_BUFF_LEN_MAX] = {0};
 volatile uint16_t IR_recv0_length = 0;
 volatile uint8_t  IR_recv0_complete_flag = 0;

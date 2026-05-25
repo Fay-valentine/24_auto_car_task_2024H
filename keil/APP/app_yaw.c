@@ -63,7 +63,7 @@ void sampleYaw(YawPID_t* pid)
 
         pid->locked = 1;//锁定采样
 
-        OLED_ShowSNum_Grid(1,11,pid->target,4,1,0,1);//更新显示一次target_yaw
+        OLED_ShowSNum_Grid(3,6,pid->target,4,1,0,1);//更新显示一次target_yaw
         
         return;//进行下一次周期，防止current_yaw未更新
     }
@@ -106,6 +106,6 @@ void walkStraight_Yaw(YawPID_t* pid)
     float Vz=YawPID_Compute(pid,yaw_error);
     
     float Vz_total = Vz + Vz_Bias;
-    Motion_Car_Control(G_SPEED, 0, -(int16_t)Vz_total);
+    Motion_Car_Control(g_speed, 0, -(int16_t)Vz_total);
  
 }

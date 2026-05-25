@@ -16,7 +16,6 @@
 #endif
 
 extern int g_IR_track_speed;
-extern float g_yaw_drift_rate;
 
 void IR_PID_Reset(void);
 void LineWalking(void);
