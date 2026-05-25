@@ -23,7 +23,7 @@ void Mode2_Loop(void)//在直行函数和循迹函数之间切换，通过是否
 		{
             if(Black_Flag==0)//不在黑线上
             {
-                StraightLineWalk_IMU();//直行
+                walkStraight_Yaw(&yaw_pid);//直行
             }
             else//在黑线上
             {
@@ -40,8 +40,8 @@ void Mode2_Exit(void)
 	Stop_Num=0;                     //清零停车点
     g_IR_track_speed = 0;   		//清零目标速度
 	Motion_Stop(STOP_BRAKE);		//优先刹车
-    StraightLineWalk_IMU_Reset();	//重置直行函数
-	Yaw_Unlock();//解锁朝向
+    walkStraight_Yaw_Reset(&yaw_pid);	//重置直行函数
+	YawPID_Unlock(&yaw_pid);//解锁朝向
 	Black_Check_Reset();			//重置黑线判断
 	//OLED_ShowString_Grid(3,0,"Mode2_Exit",1,0,1);//显示退出信息
 }

@@ -30,5 +30,5 @@ void bsp_Init(void)
     //delay_ms(18000);   // 也可留出余量，写成 18000
     OLED_Clear();
     //直行
-    StraightLineWalk_IMU_Init();
+    walkStraight_Yaw_Init(&yaw_pid);
 }

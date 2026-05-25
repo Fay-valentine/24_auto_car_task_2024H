@@ -18,7 +18,7 @@ void Mode3_Init(void)
 	Mode_Loop_flag=1;			//循环开启flag
 	Stop_Num=5;					//在第5个点停车，即第二次的A点
 
-	Yaw_sample();//采样一次目标航向角
+	sampleYaw(&yaw_pid);//采样一次目标航向角
 
 	//显示相应信息
 	OLED_ShowNum_Grid(1,15,Mode_Loop_flag,1,1,0,1);     //显示循环开启flag
@@ -40,50 +40,63 @@ void Mode3_Loop(void)
     		case POINT_A://右转39°
 				if(turn_flag_A==0)
 				{
-					turnByAngle(1,39);
-					turn_flag_A=1;
+					if(turnByAngle(&yaw_pid,1,39))
+					{
+						turn_flag_A=1;
+					}
 				}
     		    break;
 			
 			case POINT_C://左转39°
 				if(turn_flag_C==0)
 				{
-					turnByAngle(-1,39);
-					//更新target_yaw为循迹半圆后的角度
-					target_yaw=target_yaw-180;
-					turn_flag_C=1;
+					if(turnByAngle(&yaw_pid,-1,39))
+					{
+						//更新target_yaw为循迹半圆后的角度
+						float target_yaw=YawPID_GetTarget(&yaw_pid);
+						YawPID_SetTarget(&yaw_pid,target_yaw-180);
+						turn_flag_C=1;
+					}
 				}
 				break;
 
 			case POINT_B://左转39°
 				if(turn_flag_B==0)
 				{
-					turnByAngle(-1,39);
-					turn_flag_B=1;
+					if(turnByAngle(&yaw_pid,-1,39))
+					{
+						turn_flag_B=1;
+					}
 				}
 				break;
 				
 			case POINT_D://右转39°
 				if(turn_flag_D==0)
 				{
-					turnByAngle(1,39);
-					//更新target_yaw为循迹半圆后的角度
-					target_yaw=target_yaw+180;
-					turn_flag_D=1;
+					if(turnByAngle(&yaw_pid,1,39))
+					{
+						//更新target_yaw为循迹半圆后的角度
+						float target_yaw=YawPID_GetTarget(&yaw_pid);
+						YawPID_SetTarget(&yaw_pid,target_yaw+180);
+						turn_flag_D=1;
+					}
 				}
 				break;
     		default:
     		    break;
     		}
 
-           if(Black_Flag==0)//不在黑线上
+           if(!turnByAngle_IsBusy())//转向期间不直行也不循迹
     		{
-    		    StraightLineWalk_IMU();//直行
-    		}
-    		else//在黑线上
-    		{
-    		    IR_PID_Reset();//重置PID参数
-    		    LineWalking();//循迹
+		        if(Black_Flag==0)//不在黑线上
+    		    {
+    		        walkStraight_Yaw(&yaw_pid);//直行
+    		    }
+    		    else//在黑线上
+    		    {
+    		        IR_PID_Reset();//重置PID参数
+    		        LineWalking();//循迹
+    		    }
     		}
 		}
 
@@ -106,8 +119,8 @@ void Mode3_Exit(void)
 	turn_flag_B=0;
 	turn_flag_D=0;
 	Motion_Stop(STOP_BRAKE);		//优先刹车
-    StraightLineWalk_IMU_Reset();	//重置直行函数
-	Yaw_Unlock();//解锁朝向
+    walkStraight_Yaw_Reset(&yaw_pid);	//重置直行函数
+	YawPID_Unlock(&yaw_pid);//解锁朝向
 	Black_Check_Reset();			//重置黑线判断
 	//OLED_ShowString_Grid(3,0,"Mode3_Exit",1,0,1);//显示退出信息
 }

@@ -34,3 +34,26 @@ void Get_EulerAngles(void)
 }
 
 
+/**
+ * @brief 刷新并返回yaw
+ * 
+ * @return float 
+ */
+float Get_Yaw(void)
+{
+    static float last_valid_yaw = 0.0f;
+
+    float p, r, y;
+    if (mpu_dmp_get_data(&p, &r, &y) == 0)
+    {
+        if (y >= -180.0f && y <= 180.0f)
+        {
+            pitch = p; roll = r; yaw = y;
+            last_valid_yaw = y;
+            return y;
+        }
+    }
+    
+    // 返回上次有效值
+    return last_valid_yaw;
+}

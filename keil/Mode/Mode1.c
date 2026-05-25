@@ -18,7 +18,7 @@ void Mode1_Loop(void)
 	{
 		if(g_IR_track_speed!=0)
 		{
-			StraightLineWalk_IMU();//直行
+			walkStraight_Yaw(&yaw_pid);//直行
 		}
 	}
 	
@@ -30,8 +30,8 @@ void Mode1_Exit(void)
 	Stop_Num=0;//清零停车点
 	Motion_Stop(STOP_BRAKE);		//优先刹车
 	g_IR_track_speed = 0;   		//清零目标速度
-    StraightLineWalk_IMU_Reset();	//重置直行函数
-	Yaw_Unlock();//解锁朝向
+    walkStraight_Yaw_Reset(&yaw_pid);	//重置直行函数
+	YawPID_Unlock(&yaw_pid);//解锁朝向
 	Black_Check_Reset();			//重置黑线判断
 	//OLED_ShowString_Grid(3,0,"Mode1_Exit",1,0,1);
 }

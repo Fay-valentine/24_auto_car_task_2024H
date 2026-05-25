@@ -32,9 +32,6 @@
 #include "inv_mpu.h"
 #include "inv_mpu_dmp_motion_driver.h"
 
-#include "app_straight_yaw.h"
-
-
 #include "bsp_RGB.h"
 #include "app_rgb.h"
 
@@ -47,5 +44,8 @@
 #include "Mode3.h"
 #include "Mode4.h"
 #include "Global.h"
+
+#include "PID_yaw.h"
+#include "app_yaw.h"
 
 #endif

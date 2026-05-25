@@ -3,6 +3,8 @@
 
 #include "std_types.h"
 
+struct YawPID_t;
+
 #define BLACK_LINE      1
 #define WHITE_LINE      0
 
@@ -27,6 +29,7 @@ void Black_Check_Reset(void);
 uint8_t get_is_black(void);
 
 void Schedule_Run(void);
-void turnByAngle(int8_t direction, float angle);
+uint8_t turnByAngle(struct YawPID_t *pid,int8_t direction, float angle);
+uint8_t turnByAngle_IsBusy(void);
 
 #endif

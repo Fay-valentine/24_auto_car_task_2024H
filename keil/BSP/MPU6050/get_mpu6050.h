@@ -11,7 +11,7 @@ extern volatile float pitch,roll,yaw;//全局可访问的欧拉角变量
 extern volatile short angle[3];
 extern volatile short accel[3];
 
-
+float Get_Yaw(void);
 void Get_EulerAngles(void);
 
 #endif

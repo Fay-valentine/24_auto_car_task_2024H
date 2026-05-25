@@ -115,68 +115,74 @@ uint8_t get_is_black(void)
 // }
 
 volatile int8_t turn_adjust=0;//转头后的调整角度
+
+#define TURN_STATE_IDLE       0
+#define TURN_STATE_STOP_WAIT  1
+#define TURN_STATE_SPINNING   2
+
+static uint8_t  turn_state = TURN_STATE_IDLE;
+static float  turn_target_angle;
+static int16_t  turn_spin_speed;
+static uint32_t turn_start_time;
+
+uint8_t turnByAngle_IsBusy(void)
+{
+    return (turn_state != TURN_STATE_IDLE);
+}
+
 /**
- * @brief 掉头函数
+ * @brief 掉头函数（非阻塞版本）
  * @param direction 1: 顺时针右转掉头, -1: 逆时针左转掉头
  * @param angle 旋转的角度
+ * @return 0: 正在转向中, 1: 转向完成
  */
-void turnByAngle(int8_t direction, float angle)
+uint8_t turnByAngle(struct YawPID_t *pid,int8_t direction, float angle)
 {
-    // 停止当前运动
-    Motion_Stop(STOP_BRAKE);
-    delay_ms(50);
-
-    // 旋转速度（绝对值，单位 mm/s，对应 Motion_Car_Control 的 V_z 参数）
-    int16_t spin_speed = 800 * direction;   // 800 是速度值，可调整
-    
-    float target_angle=target_yaw-(direction*angle);
-    if (target_angle > 180.0f)  
+    float diff;
+    switch (turn_state)
     {
-        target_angle -= 360.0f;
-    }
-    if (target_angle < -180.0f) 
-    {
-        target_angle += 360.0f;
-    }
+    case TURN_STATE_IDLE://空闲状态
+        Motion_Stop(STOP_BRAKE);//优先刹车,等会再加直行函数的重置
+        walkStraight_Yaw_Reset(pid);//重置直行函数
 
-    // 旋转
-    Motion_Car_Control(0, 0, spin_speed);
+        turn_target_angle = YawPID_GetTarget(pid) - (direction * angle);//计算目标角度
+        Wrap_Process(&turn_target_angle);//环绕处理
 
-    while(true)
-    {
-        mpu_dmp_get_data(&pitch,&roll,&yaw);               // 更新 yaw
+        turn_spin_speed = 800 * direction;//设置旋转速度
+        turn_start_time = Get_Time();//记录转向开始时间
 
-        // 计算最短角度差
-        float diff = yaw - target_angle;
+        turn_state = TURN_STATE_STOP_WAIT;
+        return 0;
 
-        if (diff > 180.0f)  
+    case TURN_STATE_STOP_WAIT://等待状态，50ms
+        if (Get_Time() - turn_start_time < 50)
         {
-            diff -= 360.0f;
+            return 0;
         }
-        if (diff < -180.0f) 
-        {
-            diff += 360.0f;
-        }
+        Motion_Car_Control(0, 0, turn_spin_speed);
 
-        if (fabs(diff) < 8.0f)            // 误差 < 8° 即停止
+        turn_state = TURN_STATE_SPINNING;
+        return 0;
+
+    case TURN_STATE_SPINNING://旋转状态
+        diff = Get_Yaw() - turn_target_angle;//计算角度差
+        Wrap_Process(&diff);//环绕处理
+
+        if (fabs(diff) < 8.0f)
         {
-            break;
+            Motion_Stop(STOP_BRAKE);
+            walkStraight_Yaw_Reset(pid);//重置直行函数
+            pid->target = turn_target_angle + turn_adjust;//设置目标角度
+            Wrap_Process(&pid->target);
+            OLED_ShowSNum_Grid(3, 6, pid->target, 4, 1, 0, 1);
+        
+            turn_state = TURN_STATE_IDLE;
+            return 1;
         }
-            
-        delay_ms(3);                     // 避免空转
+        return 0;
+
+    default:
+        turn_state = TURN_STATE_IDLE;
+        return 1;
     }
-    
-    // 停止
-    Motion_Stop(STOP_BRAKE);
-    target_yaw = target_angle + turn_adjust;
-    if (target_yaw > 180.0f)  
-    {
-        target_yaw -= 360.0f;
-    }
-    if (target_yaw < -180.0f) 
-    {
-        target_yaw += 360.0f;
-    }
-    OLED_ShowSNum_Grid(3,6,target_yaw,4,1,0,1);//更新显示一次target_yaw
-    StraightLineWalk_IMU_Reset();         // 下次直行重新锁定
 }
