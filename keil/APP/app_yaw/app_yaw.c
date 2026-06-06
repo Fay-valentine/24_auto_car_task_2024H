@@ -1,16 +1,16 @@
 #include "app_yaw.h"
 #include "AllHeader.h"
 
-float Vz_Bias = 0.0f;  //转向偏差值，来克服左右轮差距
-
-YawPID_t yaw_pid;
-
-
-#include <math.h>
-
 #ifndef M_PI
 #define M_PI 3.14159265358979323846f
 #endif
+
+float Vz_Bias = 0.0f;  //转向偏差值，来克服左右轮差距
+
+YawPID_t yaw_pid;
+YawFilter_t yaw_filter;
+
+
 
 /**
  * @brief  计算一组角度的环形平均值（矢量平均）
@@ -20,26 +20,34 @@ YawPID_t yaw_pid;
  */
 float average_yaw_deg(const float angles[], int count)
 {
+    // 处理空数组
     if (count <= 0) return 0.0f;
 
-    float sum_sin = 0.0f, sum_cos = 0.0f;
+    float sum_sin = 0.0f;  // 所有角度的正弦和
+    float sum_cos = 0.0f;  // 所有角度的余弦和
+
     for (int i = 0; i < count; i++) 
     {
+        // 将角度转换为弧度（C标准库三角函数使用弧度）
         float rad = angles[i] * M_PI / 180.0f;
+        // 累加单位向量的分量
         sum_sin += sinf(rad);
         sum_cos += cosf(rad);
     }
 
-    // 防止合向量为零（如角度均匀环绕一周）
+    // 检查合向量是否几乎为零（例如角度均匀分布在圆周上）
+    // 此时无法定义唯一平均方向，返回默认值 0°
     if (fabsf(sum_sin) < 1e-6f && fabsf(sum_cos) < 1e-6f) 
     {
         return 0.0f;
     }
 
+    // 计算合向量的辐角（弧度），即环形平均角度
     float avg_rad = atan2f(sum_sin, sum_cos);
+    // 弧度转换为度
     float avg_deg = avg_rad * 180.0f / M_PI;
 
-    // 归一化到 [-180, 180)
+    // 将结果归一化到 [-180, 180) 区间，与输入角度范围一致
     if (avg_deg >= 180.0f)      avg_deg -= 360.0f;
     else if (avg_deg < -180.0f) avg_deg += 360.0f;
 
@@ -54,6 +62,7 @@ void sampleYaw(YawPID_t* pid)
         float yaw_samples[40];//采样数组
         int valid_count = 0;//有效采样次数
         
+        Yaw_Update();//确保yaw被正确更新
         for (int i = 0; i < 40; i++)   // 取 40 次，共400ms
         {
             yaw_samples[valid_count++] = Get_Yaw();
@@ -74,6 +83,7 @@ void walkStraight_Yaw_Init(YawPID_t* pid)
 {
     YawPID_Init(pid,PID_YAW_KP,PID_YAW_KI,PID_YAW_KD,
                 PID_YAW_INTEGRAL_LIMIT,PID_YAW_OUTPUT_LIMIT);
+    yaw_filter_Init(&yaw_filter,LPF_ALPHA);
 }
 /**
  * @brief 重置pid，清空电机的积分和输出
@@ -92,7 +102,8 @@ void walkStraight_Yaw(YawPID_t* pid)
         return;  // ← 未锁定时不执行
     }
 
-    float current_yaw=Get_lpf1st_yaw();//一阶低通滤波
+    
+    float current_yaw=yaw_filter_Process(&yaw_filter,Get_Yaw());//一阶低通滤波
 
     pid->actual = current_yaw;//更新实际航向
 

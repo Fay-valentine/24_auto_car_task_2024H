@@ -1,41 +1,6 @@
 #include "PID_yaw.h"
 #include "get_mpu6050.h"
-
-
-
-void Wrap_Process(float *angle)
-{
-    while (*angle > 180.0f) 
-    {
-        *angle -= 360.0f;
-    }
-    while (*angle < -180.0f) 
-    {
-        *angle += 360.0f;
-    }
-}
-
-/**
- * @brief 获取一阶低通滤波后的yaw角度
- * 
- * @return float 过滤后的yaw角度
- */
-float Get_lpf1st_yaw(void)
-{
-    Get_Yaw();
-    static float lpf = 0.0f;
-    static uint8_t init = 1;
-    if (init) 
-    { 
-        lpf = yaw; 
-        init = 0; 
-    }
-    lpf = 0.8f * lpf + 0.2f * yaw;   // 低通滤波（系数可调）
-    float filtered = lpf;
-    //环绕处理
-    Wrap_Process(&filtered);
-    return filtered;
-}
+#include "unwrap_yaw.h"
 
 
 void YawPID_Init(YawPID_t *pid, float kp, float ki, float kd,

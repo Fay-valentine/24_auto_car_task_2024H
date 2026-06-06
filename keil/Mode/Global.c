@@ -25,6 +25,7 @@ void Global_Loop(void)
 		}
 	}
 
+	//黑线检测
     if(Mode_Loop_flag)
     {
         //10ms以上轮询,判断是否在黑线上
@@ -36,9 +37,17 @@ void Global_Loop(void)
 	    }
     }
     
+	//刷新yaw值,10ms
+	static uint32_t last_yaw_time = 0;
+	if (Get_Time() - last_yaw_time >= 10) 
+	{
+		Yaw_Update();
+		last_yaw_time = Get_Time();
+	}
 
+	
+	//低频刷新IR,yaw,point_count,black_flag,200ms
 	static uint32_t last_oled = 0;
-	//低频刷新,200ms
     if (Get_Time() - last_oled > 200)
     {
         // 显示 8 位数据
@@ -49,7 +58,7 @@ void Global_Loop(void)
             IR_Data_Number[6], IR_Data_Number[7]);
         OLED_ShowString_Grid(2, 3, (char*)oledbuf, 1, 0, 1);//刷新IR数据
 
-        OLED_ShowSNum_Grid(3,16,yaw,4,1,0,0);//刷新yaw
+        OLED_ShowSNum_Grid(3,16,Get_Yaw(),4,1,0,0);//刷新yaw
 
         OLED_ShowNum_Grid(4,6,point_count,1,1,0,1);//刷新point_count
         OLED_ShowNum_Grid(4,17,get_is_black(),1,1,0,1);//刷新黑线flag

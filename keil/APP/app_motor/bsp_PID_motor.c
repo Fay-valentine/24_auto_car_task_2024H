@@ -22,7 +22,7 @@ volatile	float Yawpid_out ;
 volatile	float now_yawout;
 //volatile	int16_t target_yaw;
 
-extern volatile float pitch,roll,yaw; 
+//extern volatile float pitch,roll,yaw; 
 
 extern volatile float my_yaw;
 

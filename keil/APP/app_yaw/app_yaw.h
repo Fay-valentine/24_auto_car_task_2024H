@@ -1,8 +1,7 @@
 #ifndef _APP_YAW_H_
 #define _APP_YAW_H_
 #include "PID_yaw.h"
-
-// 前置声明，避免包含整个头文件
+#include "std_types.h"
 
 extern YawPID_t yaw_pid;
 

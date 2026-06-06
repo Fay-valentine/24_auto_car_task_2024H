@@ -2,13 +2,8 @@
 #include "AllHeader.h"
 
 #define Pi 3.14159265
-volatile short angle[3];
-volatile short accel[3];
-volatile float pitch,roll,yaw;   //欧拉角 Euler Angles
 
-volatile short gyrox,gyroy,gyroz;				//陀螺仪--角速度
-
-volatile short aacx,aacy,aacz;				//陀螺仪--角速度
+volatile static float pitch,roll,yaw;   //欧拉角 Euler Angles
 
 /**
  * @brief pitch,roll,yaw单位为度
@@ -33,13 +28,7 @@ void Get_EulerAngles(void)
 
 }
 
-
-/**
- * @brief 刷新并返回yaw
- * 
- * @return float 
- */
-float Get_Yaw(void)
+void Yaw_Update(void)
 {
     static float last_valid_yaw = 0.0f;
 
@@ -50,10 +39,29 @@ float Get_Yaw(void)
         {
             pitch = p; roll = r; yaw = y;
             last_valid_yaw = y;
-            return y;
+            return;
         }
     }
-    
-    // 返回上次有效值
-    return last_valid_yaw;
+    yaw = last_valid_yaw;
+}
+
+/**
+ * @brief 刷新并返回yaw
+ * 
+ * @return float 
+ */
+float Get_Yaw(void)
+{
+    return yaw;
+}
+
+void Yaw_tick(void)
+{
+    static uint8_t count=0;
+    count++;
+    if(count>=10)
+    {
+        count=0;
+        Yaw_Update();
+    }
 }

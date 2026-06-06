@@ -26,9 +26,6 @@ typedef struct YawPID_t
     uint8_t locked;            /**< 是否已锁定目标角度 */
 } YawPID_t;
 
-void Wrap_Process(float *angle);
-float Get_lpf1st_yaw(void);
-
 void YawPID_Init(YawPID_t *pid, float kp, float ki, float kd,
                  float integral_limit, float output_limit);
                  

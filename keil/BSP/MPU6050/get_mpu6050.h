@@ -1,18 +1,14 @@
-#ifndef	_APP_MPU6050_H_
-#define _APP_MPU6050_H_
-
+#ifndef	_GET_MPU6050_H_
+#define _GET_MPU6050_H_
 
 #include "bsp_mpu6050.h"
 
+//extern volatile float pitch,roll,yaw;//全局可访问的欧拉角变量
 
-
-extern volatile float pitch,roll,yaw;//全局可访问的欧拉角变量
-
-extern volatile short angle[3];
-extern volatile short accel[3];
-
-float Get_Yaw(void);
 void Get_EulerAngles(void);
+void Yaw_Update(void);
+float Get_Yaw(void);
+void Yaw_tick(void);
 
 #endif
 
