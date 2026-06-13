@@ -65,6 +65,9 @@ void Black_Check(uint8_t num)
                 case Mode3:
                     Mode3_Exit();
                     break;
+                case Mode4:
+                    Mode4_Exit();
+                    break;
                 default:
                     break;
                 }

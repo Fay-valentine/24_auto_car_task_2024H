@@ -4,41 +4,41 @@
 
 u8 OLED_GRAM[144][4];
 
-//���Ժ���
+//反显函数
 void OLED_ColorTurn(u8 i)
 {
 	if(i==0)
 		{
-			OLED_WR_Byte(0xA6,OLED_CMD);//������ʾ
+			OLED_WR_Byte(0xA6,OLED_CMD);//正常显示
 		}
 	if(i==1)
 		{
-			OLED_WR_Byte(0xA7,OLED_CMD);//��ɫ��ʾ
+			OLED_WR_Byte(0xA7,OLED_CMD);//反色显示
 		}
 }
 
-//��Ļ��ת180��
+//屏幕旋转180度
 void OLED_DisplayTurn(u8 i)
 {
 	if(i==0)
 		{
-			OLED_WR_Byte(0xC8,OLED_CMD);//������ʾ
+			OLED_WR_Byte(0xC8,OLED_CMD);//正常显示
 			OLED_WR_Byte(0xA1,OLED_CMD);
 		}
 	if(i==1)
 		{
-			OLED_WR_Byte(0xC0,OLED_CMD);//��ת��ʾ
+			OLED_WR_Byte(0xC0,OLED_CMD);//反转显示
 			OLED_WR_Byte(0xA0,OLED_CMD);
 		}
 }
 
-//��ʱ
+//延时
 void IIC_delay(void)
 {
 	delay_us(4);
 }
 
-//��ʼ�ź�
+//起始信号
 void I2C_Start(void)
 {
 	OLED_SDA_Set();
@@ -50,7 +50,7 @@ void I2C_Start(void)
 	IIC_delay();
 }
 
-//�����ź�
+//结束信号
 void I2C_Stop(void)
 {
 	OLED_SDA_Clr();
@@ -59,8 +59,8 @@ void I2C_Stop(void)
 	OLED_SDA_Set();
 }
 
-//�ȴ��ź���Ӧ
-void I2C_WaitAck(void) //�������źŵĵ�ƽ
+//等待信号响应
+void I2C_WaitAck(void) //测数据信号的电平
 {
 	OLED_SDA_Set();
 	IIC_delay();
@@ -70,13 +70,13 @@ void I2C_WaitAck(void) //�������źŵĵ�ƽ
 	IIC_delay();
 }
 
-//д��һ���ֽ�
+//写入一个字节
 void Send_Byte(u8 dat)
 {
 	u8 i;
 	for(i=0;i<8;i++)
 	{
-		if(dat&0x80)//��dat��8λ�����λ����д��
+		if(dat&0x80)//将dat的8位从最高位依次写入
 		{
 			OLED_SDA_Set();
     }
@@ -87,13 +87,13 @@ void Send_Byte(u8 dat)
 		IIC_delay();
 		OLED_SCL_Set();
 		IIC_delay();
-		OLED_SCL_Clr();//��ʱ���ź�����Ϊ�͵�ƽ
+		OLED_SCL_Clr();//将时钟信号设置为低电平
 		dat<<=1;
   }
 }
 
-//����һ���ֽ�
-//mode:����/�����־ 0,��ʾ����;1,��ʾ����;
+//发送一个字节
+//mode:数据/命令标志 0,表示命令;1,表示数据;
 void OLED_WR_Byte(u8 dat,u8 mode)
 {
 	I2C_Start();
@@ -107,31 +107,31 @@ void OLED_WR_Byte(u8 dat,u8 mode)
 	I2C_Stop();
 }
 
-//����OLED��ʾ 
+//开启OLED显示 
 void OLED_DisPlay_On(void)
 {
-	OLED_WR_Byte(0x8D,OLED_CMD);//��ɱ�ʹ��
-	OLED_WR_Byte(0x14,OLED_CMD);//������ɱ�
-	OLED_WR_Byte(0xAF,OLED_CMD);//������Ļ
+	OLED_WR_Byte(0x8D,OLED_CMD);//电荷泵使能
+	OLED_WR_Byte(0x14,OLED_CMD);//开启电荷泵
+	OLED_WR_Byte(0xAF,OLED_CMD);//点亮屏幕
 }
 
-//�ر�OLED��ʾ 
+//关闭OLED显示 
 void OLED_DisPlay_Off(void)
 {
-	OLED_WR_Byte(0x8D,OLED_CMD);//��ɱ�ʹ��
-	OLED_WR_Byte(0x10,OLED_CMD);//�رյ�ɱ�
-	OLED_WR_Byte(0xAE,OLED_CMD);//�ر���Ļ
+	OLED_WR_Byte(0x8D,OLED_CMD);//电荷泵使能
+	OLED_WR_Byte(0x10,OLED_CMD);//关闭电荷泵
+	OLED_WR_Byte(0xAE,OLED_CMD);//关闭屏幕
 }
 
-//�����Դ浽OLED	
+//更新显存到OLED	
 void OLED_Refresh(void)
 {
 	u8 i,n;
 	for(i=0;i<4;i++)
 	{
-		OLED_WR_Byte(0xb0+i,OLED_CMD); //��������ʼ��ַ
-		OLED_WR_Byte(0x00,OLED_CMD);   //���õ�����ʼ��ַ
-		OLED_WR_Byte(0x10,OLED_CMD);   //���ø�����ʼ��ַ
+		OLED_WR_Byte(0xb0+i,OLED_CMD); //设置行起始地址
+		OLED_WR_Byte(0x00,OLED_CMD);   //设置低列起始地址
+		OLED_WR_Byte(0x10,OLED_CMD);   //设置高列起始地址
 		I2C_Start();
 		Send_Byte(0x78);
 		I2C_WaitAck();
@@ -145,7 +145,7 @@ void OLED_Refresh(void)
 		I2C_Stop();
   }
 }
-//��������
+//清屏函数
 void OLED_Clear(void)
 {
 	u8 i,n;
@@ -153,16 +153,16 @@ void OLED_Clear(void)
 	{
 	   for(n=0;n<128;n++)
 			{
-			 OLED_GRAM[n][i]=0;//�����������
+			 OLED_GRAM[n][i]=0;//清除所有数据
 			}
   }
-	OLED_Refresh();//������ʾ
+	OLED_Refresh();//更新显示
 }
 
-//���� 
+//画点 
 //x:0~127
 //y:0~63
-//t:1 ��� 0,���	
+//t:1 填充 0,清空	
 void OLED_DrawPoint(u8 x,u8 y,u8 t)
 {
 	u8 i,m,n;
@@ -178,29 +178,29 @@ void OLED_DrawPoint(u8 x,u8 y,u8 t)
 	}
 }
 
-//����
-//x1,y1:�������
-//x2,y2:��������
+//画线
+//x1,y1:起点坐标
+//x2,y2:结束坐标
 void OLED_DrawLine(u8 x1,u8 y1,u8 x2,u8 y2,u8 mode)
 {
 	u16 t; 
 	int xerr=0,yerr=0,delta_x,delta_y,distance;
 	int incx,incy,uRow,uCol;
-	delta_x=x2-x1; //������������ 
+	delta_x=x2-x1; //计算坐标增量 
 	delta_y=y2-y1;
-	uRow=x1;//�����������
+	uRow=x1;//画线起点坐标
 	uCol=y1;
-	if(delta_x>0)incx=1; //���õ������� 
-	else if (delta_x==0)incx=0;//��ֱ�� 
+	if(delta_x>0)incx=1; //设置单步方向 
+	else if (delta_x==0)incx=0;//垂直线 
 	else {incx=-1;delta_x=-delta_x;}
 	if(delta_y>0)incy=1;
-	else if (delta_y==0)incy=0;//ˮƽ�� 
+	else if (delta_y==0)incy=0;//水平线 
 	else {incy=-1;delta_y=-delta_x;}
-	if(delta_x>delta_y)distance=delta_x; //ѡȡ�������������� 
+	if(delta_x>delta_y)distance=delta_x; //选取基本增量坐标轴 
 	else distance=delta_y;
 	for(t=0;t<distance+1;t++)
 	{
-		OLED_DrawPoint(uRow,uCol,mode);//����
+		OLED_DrawPoint(uRow,uCol,mode);//画点
 		xerr+=delta_x;
 		yerr+=delta_y;
 		if(xerr>distance)
@@ -215,8 +215,8 @@ void OLED_DrawLine(u8 x1,u8 y1,u8 x2,u8 y2,u8 mode)
 		}
 	}
 }
-//x,y:Բ������
-//r:Բ�İ뾶
+//x,y:圆心坐标
+//r:圆的半径
 void OLED_DrawCircle(u8 x,u8 y,u8 r)
 {
 	int a, b,num;
@@ -235,7 +235,7 @@ void OLED_DrawCircle(u8 x,u8 y,u8 r)
         OLED_DrawPoint(x - b, y + a,1);
         
         a++;
-        num = (a * a + b * b) - r*r;//���㻭�ĵ���Բ�ĵľ���
+        num = (a * a + b * b) - r*r;//计算画的点离圆心的距离
         if(num > 0)
         {
             b--;
@@ -246,28 +246,28 @@ void OLED_DrawCircle(u8 x,u8 y,u8 r)
 
 
 
-//��ָ��λ����ʾһ���ַ�,���������ַ�
+//在指定位置显示一个字符,包括部分字符
 //x:0~127
 //y:0~63
-//size1:ѡ������ 6x8/6x12/8x16/12x24
-//mode:0,��ɫ��ʾ;1,������ʾ
+//size1:选择字体 6x8/6x12/8x16/12x24
+//mode:0,反色显示;1,正常显示
 void OLED_ShowChar(u8 x,u8 y,u8 chr,u8 size1,u8 mode)
 {
 	u8 i,m,temp,size2,chr1;
 	u8 x0=x,y0=y;
 	if(size1==8)size2=6;
-	else size2=(size1/8+((size1%8)?1:0))*(size1/2);  //�õ�����һ���ַ���Ӧ������ռ���ֽ���
-	chr1=chr-' ';  //����ƫ�ƺ��ֵ
+	else size2=(size1/8+((size1%8)?1:0))*(size1/2);  //得到字体一个字符对应点阵集所占的字节数
+	chr1=chr-' ';  //计算偏移后的值
 	for(i=0;i<size2;i++)
 	{
 		if(size1==8)
-			  {temp=asc2_0806[chr1][i];} //����0806����
+			  {temp=asc2_0806[chr1][i];} //调用0806字体
 		else if(size1==12)
-        {temp=asc2_1206[chr1][i];} //����1206����
+        {temp=asc2_1206[chr1][i];} //调用1206字体
 		else if(size1==16)
-        {temp=asc2_1608[chr1][i];} //����1608����
+        {temp=asc2_1608[chr1][i];} //调用1608字体
 		else if(size1==24)
-        {temp=asc2_2412[chr1][i];} //����2412����
+        {temp=asc2_2412[chr1][i];} //调用2412字体
 		else return;
 		for(m=0;m<8;m++)
 		{
@@ -284,14 +284,14 @@ void OLED_ShowChar(u8 x,u8 y,u8 chr,u8 size1,u8 mode)
 }
 
 
-//��ʾ�ַ���
-//x,y:�������  
-//size1:�����С 
-//*chr:�ַ�����ʼ��ַ 
-//mode:0,��ɫ��ʾ;1,������ʾ
+//显示字符串
+//x,y:起点坐标  
+//size1:字体大小 
+//*chr:字符串起始地址 
+//mode:0,反色显示;1,正常显示
 void OLED_ShowString(u8 x,u8 y,const char *chr,u8 size1,u8 mode)
 {
-	while((*chr>=' ')&&(*chr<='~'))//�ж��ǲ��ǷǷ��ַ�!
+	while((*chr>=' ')&&(*chr<='~'))//判断是不是非法字符!
 	{
 		OLED_ShowChar(x,y,*chr,size1,mode);
 		if(size1==8)x+=6;
@@ -311,11 +311,11 @@ u32 OLED_Pow(u8 m,u8 n)
 	return result;
 }
 
-//��ʾ����
-//x,y :�������	 
-//len :���ֵ�λ��
-//size:�����С
-//mode:0,��ɫ��ʾ;1,������ʾ
+//显示数字
+//x,y :起点坐标	 
+//len :数字的位数
+//size:字体大小
+//mode:0,反色显示;1,正常显示
 void OLED_ShowNum(u8 x,u8 y,u32 num,u8 len,u8 size1,u8 mode)
 {
 	u8 t,temp,m=0;
@@ -334,7 +334,7 @@ void OLED_ShowNum(u8 x,u8 y,u32 num,u8 len,u8 size1,u8 mode)
   }
 }
 
-//��ʾ���и���������
+//显示带有负数的数字
 void OLED_ShowSNum(uint8_t x,uint8_t y,int num,uint8_t len,uint8_t size1,uint8_t mode)
 {
 	uint8_t t=0,temp,m=0;
@@ -359,25 +359,25 @@ void OLED_ShowSNum(uint8_t x,uint8_t y,int num,uint8_t len,uint8_t size1,uint8_t
 			}
 	}
 }
-//��ʾ����
-//x,y:�������
-//num:���ֶ�Ӧ�����
-//mode:0,��ɫ��ʾ;1,������ʾ
+//显示汉字
+//x,y:起点坐标
+//num:汉字对应的序号
+//mode:0,反色显示;1,正常显示
 void OLED_ShowChinese(u8 x,u8 y,u8 num,u8 size1,u8 mode)
 {
 	u8 m,temp;
 	u8 x0=x,y0=y;
-	u16 i,size3=(size1/8+((size1%8)?1:0))*size1;  //�õ�����һ���ַ���Ӧ������ռ���ֽ���
+	u16 i,size3=(size1/8+((size1%8)?1:0))*size1;  //得到字体一个字符对应点阵集所占的字节数
 	for(i=0;i<size3;i++)
 	{
 		if(size1==16)
-				{temp=Hzk1[num][i];}//����16*16����
+				{temp=Hzk1[num][i];}//调用16*16字体
 		else if(size1==24)
-				{temp=Hzk2[num][i];}//����24*24����
+				{temp=Hzk2[num][i];}//调用24*24字体
 		else if(size1==32)       
-				{temp=Hzk3[num][i];}//����32*32����
+				{temp=Hzk3[num][i];}//调用32*32字体
 		else if(size1==64)
-				{temp=Hzk4[num][i];}//����64*64����
+				{temp=Hzk4[num][i];}//调用64*64字体
 		else return;
 		for(m=0;m<8;m++)
 		{
@@ -393,9 +393,9 @@ void OLED_ShowChinese(u8 x,u8 y,u8 num,u8 size1,u8 mode)
 	}
 }
 
-//num ��ʾ���ֵĸ���
-//space ÿһ����ʾ�ļ��
-//mode:0,��ɫ��ʾ;1,������ʾ
+//num 显示汉字的个数
+//space 每一遍显示的间隔
+//mode:0,反色显示;1,正常显示
 void OLED_ScrollDisplay(u8 num,u8 space,u8 mode)
 {
 	u8 i,n,t=0,m=0,r;
@@ -403,12 +403,12 @@ void OLED_ScrollDisplay(u8 num,u8 space,u8 mode)
 	{
 		if(m==0)
 		{
-	    OLED_ShowChinese(128,8,t,16,mode); //д��һ�����ֱ�����OLED_GRAM[][]������
+	    OLED_ShowChinese(128,8,t,16,mode); //写入一个汉字保存在OLED_GRAM[][]数组中
 			t++;
 		}
 		if(t==num)
 			{
-				for(r=0;r<16*space;r++)      //��ʾ���
+				for(r=0;r<16*space;r++)      //显示间隔
 				 {
 					for(i=1;i<144;i++)
 						{
@@ -423,7 +423,7 @@ void OLED_ScrollDisplay(u8 num,u8 space,u8 mode)
       }
 		m++;
 		if(m==16){m=0;}
-		for(i=1;i<144;i++)   //ʵ������
+		for(i=1;i<144;i++)   //实现左移
 		{
 			for(n=0;n<4;n++)
 			{
@@ -434,10 +434,10 @@ void OLED_ScrollDisplay(u8 num,u8 space,u8 mode)
 	}
 }
 
-//x,y���������
-//sizex,sizey,ͼƬ����
-//BMP[]��Ҫд���ͼƬ����
-//mode:0,��ɫ��ʾ;1,������ʾ
+//x,y：起点坐标
+//sizex,sizey,图片长宽
+//BMP[]：要写入的图片数组
+//mode:0,反色显示;1,正常显示
 void OLED_ShowPicture(u8 x,u8 y,u8 sizex,u8 sizey,u8 BMP[],u8 mode)
 {
 	u16 j=0;
@@ -467,7 +467,7 @@ void OLED_ShowPicture(u8 x,u8 y,u8 sizex,u8 sizey,u8 BMP[],u8 mode)
      }
 	 }
 }
-//OLED�ĳ�ʼ��
+//OLED的初始化
 void OLED_Init(void)
 {
      
@@ -510,8 +510,8 @@ void OLED_Init(void)
 }
 
 
-//����һ��������ʾ
-/* д��һ���ַ� */
+//添加一个行数显示
+/* 写入一行字符 */
 void OLED_Draw_Line(char *data, uint8_t line, bool clear, bool refresh)
 {
 	
@@ -530,19 +530,19 @@ void OLED_Draw_Line(char *data, uint8_t line, bool clear, bool refresh)
 		
 }
 
-//����ѡ�����ʾ�����������꣩
-// ============== ����������ʾ��װ��6x8���壩 ==============
-#define CHAR_WIDTH  6   // �ַ�����(����)
-#define LINE_HEIGHT 8   // �и�(����)
-#define MAX_COL     (128 / CHAR_WIDTH)  // ������� = 21
+//行列选择的显示函数（非坐标）
+// ============== 行列网格显示封装（6x8字体） ==============
+#define CHAR_WIDTH  6   // 字符宽度(像素)
+#define LINE_HEIGHT 8   // 行高(像素)
+#define MAX_COL     (128 / CHAR_WIDTH)  // 最大列数 = 21
 
 /**
- * @brief ��ָ��������ʾһ���ַ�
- * @param line  �к� (1~4)
- * @param col   �к� (0~20)��������Χ����ʾ
- * @param chr   �ַ� (ASCII��)
- * @param mode  0=��ɫ��ʾ, 1=������ʾ
- * @param refresh  �Ƿ�����ˢ��
+ * @brief 在指定行列显示一个字符
+ * @param line  行号 (1~4)
+ * @param col   列号 (0~20)，超出范围不显示
+ * @param chr   字符 (ASCII码)
+ * @param mode  0=反色显示, 1=正常显示
+ * @param refresh  是否立即刷新
  */
 void OLED_ShowChar_Grid(uint8_t line, uint8_t col, uint8_t chr, uint8_t mode, bool refresh)
 {
@@ -554,13 +554,13 @@ void OLED_ShowChar_Grid(uint8_t line, uint8_t col, uint8_t chr, uint8_t mode, bo
 }
 
 /**
- * @brief ��ָ�����п�ʼ��ʾ�ַ������Զ����У��������ֽضϣ�
- * @param line  �к� (1-4)
- * @param col   ��ʼ�к� (0-20)
- * @param str   �ַ��� (֧�ֿո�Ϳɼ�ASCII)
- * @param mode  ��ʾģʽ
- * @param clear_line  �Ƿ���������У��ӵ�0�е�ĩβ��
- * @param refresh  �Ƿ�����ˢ��
+ * @brief 在指定行列开始显示字符串（自动换行，超出部分截断）
+ * @param line  行号 (1-4)
+ * @param col   起始列号 (0-20)
+ * @param str   字符串 (支持空格和可见ASCII)
+ * @param mode  显示模式
+ * @param clear_line  是否先清除该行（从第0列到末尾）
+ * @param refresh  是否立即刷新
  */
 void OLED_ShowString_Grid(uint8_t line, uint8_t col, const char *str, uint8_t mode, bool clear_line, bool refresh)
 {
@@ -568,7 +568,7 @@ void OLED_ShowString_Grid(uint8_t line, uint8_t col, const char *str, uint8_t mo
     
     uint8_t y = (line - 1) * LINE_HEIGHT;
     
-    // ������У������Ҫ��
+    // 清除整行（如果需要）
     if (clear_line) {
         for (uint8_t x = 0; x < 128; x++) {
             for (uint8_t dy = 0; dy < LINE_HEIGHT; dy++) {
@@ -577,7 +577,7 @@ void OLED_ShowString_Grid(uint8_t line, uint8_t col, const char *str, uint8_t mo
         }
     }
     
-    // ���ַ���ʾ
+    // 逐字符显示
     uint8_t current_col = col;
     while (*str && current_col < MAX_COL) {
         uint8_t x = current_col * CHAR_WIDTH;
@@ -589,14 +589,14 @@ void OLED_ShowString_Grid(uint8_t line, uint8_t col, const char *str, uint8_t mo
 }
 
 /**
- * @brief ��ָ��������ʾ�޷�������������λ����0��
- * @param line  �к� (1~4)
- * @param col   ��ʼ�к� (0~20)
- * @param num   Ҫ��ʾ������
- * @param len   ��ʾλ����1~10�������㲹ǰ��0
- * @param mode  ��ʾģʽ
- * @param clear_line  �Ƿ����������
- * @param refresh  �Ƿ�����ˢ��
+ * @brief 在指定行列显示无符号整数（不足位数补0）
+ * @param line  行号 (1~4)
+ * @param col   起始列号 (0~20)
+ * @param num   要显示的数字
+ * @param len   显示位数（1~10），不足补前导0
+ * @param mode  显示模式
+ * @param clear_line  是否先清除该行
+ * @param refresh  是否立即刷新
  */
 void OLED_ShowNum_Grid(uint8_t line, uint8_t col, uint32_t num, uint8_t len, uint8_t mode, bool clear_line, bool refresh)
 {
@@ -612,20 +612,20 @@ void OLED_ShowNum_Grid(uint8_t line, uint8_t col, uint32_t num, uint8_t len, uin
         }
     }
     
-    // ������ʼx���꣨�����ڲ����Զ�������ƫ�ƣ�
+    // 计算起始x坐标（函数内部会自动加上列偏移）
     OLED_ShowNum(col * CHAR_WIDTH, y, num, len, 8, mode);
     if (refresh) OLED_Refresh();
 }
 
 /**
- * @brief ��ָ��������ʾ�з�������������ռһλ��λ�����㲹�ո�
- * @param line  �к� (1~4)
- * @param col   ��ʼ�к� (0~20)
- * @param num   �з�������
- * @param len   ����ʾλ���������ţ���ʵ�����ֲ��ְ�����ֵλ������
- * @param mode  ��ʾģʽ
- * @param clear_line  �Ƿ����������
- * @param refresh  �Ƿ�����ˢ��
+ * @brief 在指定行列显示有符号整数（负号占一位，位数不足补空格）
+ * @param line  行号 (1~4)
+ * @param col   起始列号 (0~20)
+ * @param num   有符号整数
+ * @param len   总显示位数（含负号），实际数字部分按绝对值位数对齐
+ * @param mode  显示模式
+ * @param clear_line  是否先清除该行
+ * @param refresh  是否立即刷新
  */
 void OLED_ShowSNum_Grid(uint8_t line, uint8_t col, int32_t num, uint8_t len, uint8_t mode, bool clear_line, bool refresh)
 {
@@ -646,10 +646,10 @@ void OLED_ShowSNum_Grid(uint8_t line, uint8_t col, int32_t num, uint8_t len, uin
 }
 
 /**
- * @brief ���ָ���У���䱳��ɫ��
- * @param line  �к� (1~4)
- * @param mode  0=ȫ��(��ɫ), 1=ȫ��(����)
- * @param refresh  �Ƿ�����ˢ��
+ * @brief 清除指定行（填充背景色）
+ * @param line  行号 (1~4)
+ * @param mode  0=全黑(反色), 1=全白(正常)
+ * @param refresh  是否立即刷新
  */
 void OLED_ClearLine_Grid(uint8_t line, uint8_t mode, bool refresh)
 {
@@ -664,12 +664,12 @@ void OLED_ClearLine_Grid(uint8_t line, uint8_t mode, bool refresh)
 }
 
 /**
- * @brief ��ָ���о�����ʾ�ַ���
- * @param line  �к� (1~4)
- * @param str   �ַ���
- * @param mode  ��ʾģʽ
- * @param clear_line  �Ƿ����������
- * @param refresh  �Ƿ�ˢ��
+ * @brief 在指定行居中显示字符串
+ * @param line  行号 (1~4)
+ * @param str   字符串
+ * @param mode  显示模式
+ * @param clear_line  是否先清除该行
+ * @param refresh  是否刷新
  */
 void OLED_ShowString_Center(uint8_t line, const char *str, uint8_t mode, bool clear_line, bool refresh)
 {
@@ -681,26 +681,26 @@ void OLED_ShowString_Center(uint8_t line, const char *str, uint8_t mode, bool cl
 }
 
 /**
- * @brief ���ָ���У�ҳ������������
- * @param line �к� (1~4)����Ӧ OLED ��ҳ 0~3
- * @note ������Զ�ˢ���Դ�
+ * @brief 清除指定行（页）的所有像素
+ * @param line 行号 (1~4)，对应 OLED 的页 0~3
+ * @note 清除后自动刷新显存
  */
 void OLED_ClearLine(u8 line)
 {
     u8 page, col;
     
-    // ������飺�кŷ�Χ 1~4
+    // 参数检查：行号范围 1~4
     if (line < 1 || line > 4) {
         return;
     }
     
-    page = line - 1;   // ת��Ϊҳ���� (0~3)
+    page = line - 1;   // 转换为页索引 (0~3)
     
-    // ����ҳ�������У�0~127������
+    // 将该页的所有列（0~127）清零
     for (col = 0; col < 128; col++) {
         OLED_GRAM[col][page] = 0;
     }
     
-    // ˢ����ʾ
+    // 刷新显示
     OLED_Refresh();
 }

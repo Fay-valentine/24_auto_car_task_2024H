@@ -3,19 +3,7 @@
 
 #include "std_types.h"
 
-#ifndef u8
-#define u8 uint8_t
-#endif
-
-#ifndef u16
-#define u16 uint16_t
-#endif
-
-#ifndef u32
-#define u32 uint32_t
-#endif
-
-//-----------------OLED�˿ڶ���---------------- 
+//-----------------OLED端口定义---------------- 
 
 #define OLED_SCL_Clr() DL_GPIO_clearPins(OLED_PORT,OLED_SCL1_PIN)//SCL
 #define OLED_SCL_Set() DL_GPIO_setPins(OLED_PORT,OLED_SCL1_PIN)
@@ -24,8 +12,8 @@
 #define OLED_SDA_Set() DL_GPIO_setPins(OLED_PORT,OLED_SDA1_PIN)
 
 
-#define OLED_CMD  0	//д����
-#define OLED_DATA 1	//д����
+#define OLED_CMD  0	//写命令
+#define OLED_DATA 1	//写数据
 
 void OLED_ClearPoint(u8 x,u8 y);
 void OLED_ColorTurn(u8 i);
@@ -54,8 +42,8 @@ void OLED_Init(void);
 
 void OLED_Draw_Line(char *data, uint8_t line, bool clear, bool refresh);
 
-//������ʾ����
-/* ����������ʾ��װ������6x8���壩 */
+//行列显示函数
+/* 行列网格显示封装（基于6x8字体） */
 #define CHAR_WIDTH  6
 #define LINE_HEIGHT 8
 #define MAX_COL     (128 / CHAR_WIDTH)  // 21
@@ -66,7 +54,6 @@ void OLED_ShowNum_Grid(uint8_t line, uint8_t col, uint32_t num, uint8_t len, uin
 void OLED_ShowSNum_Grid(uint8_t line, uint8_t col, int32_t num, uint8_t len, uint8_t mode, bool clear_line, bool refresh);
 void OLED_ClearLine_Grid(uint8_t line, uint8_t mode, bool refresh);
 void OLED_ShowString_Center(uint8_t line, const char *str, uint8_t mode, bool clear_line, bool refresh);
-void OLED_ClearLine(u8 line);
 
 #endif
 

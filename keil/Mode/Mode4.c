@@ -30,12 +30,12 @@ void state_reset(void)
 
 void Mode4_Init(void)
 {
+	setModeLoopFlag(1);			//循环开启flag
 	g_speed=250;		//设置速度
-	Mode_Loop_flag=1;			//循环开启flag
 	Stop_Num=13;					//在第5个点停车，即第二次的A点
 	sampleYaw(&yaw_pid);//采样一次目标航向角
 	//显示相应信息
-	OLED_ShowNum_Grid(1,15,Mode_Loop_flag,1,1,0,1);     //显示循环开启flag
+	OLED_ShowNum_Grid(1,15,getModeLoopFlag(),1,1,0,1);     //显示循环开启flag
 	OLED_ShowNum_Grid(1,10,Stop_Num,1,1,0,1);           //显示停车点
 	//OLED_ShowString_Grid(2,0,"Mode4_Init",1,0,1);       //显示初始化信息
 	
@@ -44,7 +44,7 @@ void Mode4_Init(void)
 //轨迹：A->C->B->D->A2
 void Mode4_Loop(void)
 {
-	if(Mode_Loop_flag)//只有在初始化设置了 循环开启flag 为1时 才执行循环Loop
+	if(getModeLoopFlag())//只有在初始化设置了 循环开启flag 为1时 才执行循环Loop
 	{
         Black_Flag=get_is_black();//检测是否在黑线上
 
@@ -120,14 +120,12 @@ void Mode4_Loop(void)
     		    }
     		    else//在黑线上
     		    {
-    		        IR_PID_Reset();//重置PID参数
-    		        LineWalking();//循迹
+    		        IRTracking_ResetPID(&track_pid);//重置PID参数
+    		        LineWalking(&track_pid);//循迹
     		    }
     		}
 		}
 	}
-
-	
 }
 
 void Mode4_Tick(void)
@@ -136,11 +134,11 @@ void Mode4_Tick(void)
 }
 void Mode4_Exit(void)
 {
-    Mode_Loop_flag=0;               //关闭循环flag
+    setModeLoopFlag(0);               //关闭循环flag
 	Stop_Num=0;                     //清零停车点
     g_speed = 0;   		//清零目标速度
 	Motion_Stop(STOP_BRAKE);		//优先刹车
-    walkStraight_Yaw_Reset(&yaw_pid);	//重置直行函数
+    walkStraight_Yaw_Reset(&yaw_pid);	//重置直行函数参数
 	YawPID_Unlock(&yaw_pid);//解锁朝向
 	Black_Check_Reset();			//重置黑线判断
 	turnByAngle_Reset();            //重置转向状态机

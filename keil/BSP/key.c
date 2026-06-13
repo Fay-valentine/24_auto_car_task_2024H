@@ -5,13 +5,13 @@ static uint8_t KeyNum=0;
 
 uint8_t Key1_is_Press(void)
 {
-    if((DL_GPIO_readPins(KEY_button1_PORT,KEY_button1_PIN) & KEY_button1_PIN)!=0)//��������
+    if((DL_GPIO_readPins(KEY_button1_PORT,KEY_button1_PIN) & KEY_button1_PIN)!=0)
     {
-        return KEY_PRESS;//����1
+        return KEY_PRESS;
     }
     else
     {
-        return KEY_RELEASE;//����0
+        return KEY_RELEASE;
     }
 }
 
@@ -39,33 +39,33 @@ uint8_t Key3_is_Press(void)
     }
 }
 
-//��ȡ����ֵ
+
 uint8_t Key_GetNum(void)
 {
 	if(KeyNum)
 	{
 		uint8_t temp=KeyNum;
-		KeyNum=0;//���㣬��ֹһֱ���ؼ�ֵ
+		KeyNum=0;
 		return temp;
 	}
 	return 0;
 }
 
 /**
- * @brief ����״̬���
- * @return ���� ��ֵ
+ * @brief 按键状态检测
+ * @return 按键 键值
  */
 uint8_t Key_State(void)
 {
-	if(Key1_is_Press()==KEY_PRESS)//����1������
+	if(Key1_is_Press()==KEY_PRESS)//按键1被按下
 	{
 		return KEY1;
 	}
-	if(Key2_is_Press()==KEY_PRESS)//����2������
+	if(Key2_is_Press()==KEY_PRESS)//按键2被按下
 	{
 		return KEY2;
 	}
-	if(Key3_is_Press()==KEY_PRESS)//����2������
+	if(Key3_is_Press()==KEY_PRESS)//按键2被按下
 	{
 		return KEY3;
 	}
@@ -73,54 +73,54 @@ uint8_t Key_State(void)
 }
 
 /**
- * @brief 20ms�����������������ʱ�̼�ֵ״̬ 
+ * @brief 20ms计数器，并检测两个时刻键值状态 
  * 
  */
 void Key_Tick(void)
 {
-	static uint8_t count=0;//��̬���������������20����
-	static uint8_t pre_state,cur_state;//��������ʱ��״̬��staticĬ��ֵΪ0
+	static uint8_t count=0;//静态，毫秒计数器，满20归零
+	static uint8_t pre_state,cur_state;//按键两个时刻状态，static默认值为0
 	count++;
 	if(count>=20)
 	{
 		count=0;
 
 		pre_state=cur_state;
-		cur_state=Key_State();//��ȡ��ǰ��ֵ
-		if(pre_state!=0 && cur_state==0)//˵���а�������
+		cur_state=Key_State();//读取当前键值
+		if(pre_state!=0 && cur_state==0)//说明有按键按下
 		{
 			KeyNum=pre_state;
 		}
 	}
 }
 
-uint8_t Key_Scan(void)//�����������ؼ�ֵ�汾
+uint8_t Key_Scan(void)//按下立即返回键值版本
 {
-    //���º��������ؼ�ֵ������Ա��ְ��»᷵��0����ֻ֤����һ��keyx ��ֵx
-    static uint8_t release=1;//��ʼΪ�ɿ�״̬
-    volatile uint8_t ret=0;//ÿ��ѭ����ʼret������
-    //release=1ʱ����⵽key1 or key2���£�release=0������״̬
+    //按下后立即返回键值，随后仍保持按下会返回0，保证只返回一次keyx 键值x
+    static uint8_t release=1;//初始为松开状态
+    volatile uint8_t ret=0;//每次循环开始ret都归零
+    //release=1时，检测到key1 or key2按下，release=0，按下状态
     if(release==1&&(Key1_is_Press()==KEY_PRESS||Key2_is_Press()==KEY_PRESS||Key3_is_Press()==KEY_PRESS))
     {
-        delay_ms(10);//����
+        delay_ms(10);//消抖
         release=0;
         if(Key1_is_Press()==KEY_PRESS)
         {
-            //��ֵ������ֱ�ӷ��أ����ɿ����ٷ���
-            ret = KEY1;//ֵΪ1
+            //赋值而不是直接返回，等松开后再返回
+            ret = KEY1;//值为1
         }
         else if(Key2_is_Press()==KEY_PRESS)
         {
-            ret = KEY2;//ֵΪ2
+            ret = KEY2;//值为2
         }
         else if(Key3_is_Press()==KEY_PRESS)
         {
             ret = KEY3;
         }
     }
-    else if(Key1_is_Press()==KEY_RELEASE && Key2_is_Press()==KEY_RELEASE && Key3_is_Press()==KEY_RELEASE)//key1 or key2���ɿ�
+    else if(Key1_is_Press()==KEY_RELEASE && Key2_is_Press()==KEY_RELEASE && Key3_is_Press()==KEY_RELEASE)//key1 or key2都松开
     {
-        release=1;//��Ϊ�ɿ�״̬
+        release=1;//设为松开状态
     }
     return ret;
 }
@@ -132,8 +132,6 @@ uint8_t switch_mode(void)
 	OLED_Clear();
 	OLED_ShowString_Grid(1,0,"Select Mode:",1,1,1);
 	OLED_ShowNum_Grid(1,13,select_mode,1,1,0,1);
-    OLED_ShowString_Grid(2,0,"bias:",1,1,0);
-    OLED_ShowSNum_Grid(2,5,turn_adjust,3,1,0,1);
 	OLED_Refresh();
 	
 	while(1)
@@ -143,30 +141,15 @@ uint8_t switch_mode(void)
         {
 			if(key_num == KEY1)
             {
-				select_mode +=1;
-				if(select_mode > 6 )
-				{
-					select_mode = 0;
-				}
-				OLED_ShowNum_Grid(1,13,select_mode,1,1,0,1);
-				OLED_Refresh();
+				
 			}
 			else if(key_num == KEY2)
             {
-				OLED_ShowString(92,0,"OK!!!",8,1);
-				OLED_Refresh();
-				delay_ms(700);
-				OLED_Clear();
-				break;
+				
 			}
-			else if(key_num == KEY3)//��ͷ����ֵ����
+			else if(key_num == KEY3)
             {
-                if(turn_adjust>50)
-                {
-                    turn_adjust=-50.0f;
-                }
-                turn_adjust+=5.0f;
-                OLED_ShowSNum_Grid(2,5,turn_adjust,3,1,0,1);
+                
             }
 		}
         delay_ms(10);

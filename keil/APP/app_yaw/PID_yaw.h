@@ -5,7 +5,7 @@
 
 
 #define PID_YAW_KP                      (12.0f) 
-#define PID_YAW_KI                      (0.01f) 
+#define PID_YAW_KI                      (0.02f) 
 #define PID_YAW_KD                      (3.0f) 
 #define PID_YAW_INTEGRAL_LIMIT          (200.0f)  
 #define PID_YAW_OUTPUT_LIMIT            (1200.0f)

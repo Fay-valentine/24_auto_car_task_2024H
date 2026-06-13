@@ -101,8 +101,8 @@ void R1_Control(int16_t motor_speed,uint8_t direction)
 //5.双轮控制，将期望速度转为PWM，控制小车运动
 /**
  * @brief   小车底盘控制核心函数，根据左右轮速度设置PWM占空比,并设有速度限制和死区补偿
- * @param   L_motor_speed   左轮期望速度（-MAX_SPEED ~ MAX_SPEED）
- * @param   R_motor_speed   右轮期望速度（-MAX_SPEED ~ MAX_SPEED）
+ * @param   L_motor_speed   左轮期望速度（-MAX_SPEED ~ MAX_SPEED）正数前进，负数后退
+ * @param   R_motor_speed   右轮期望速度（-MAX_SPEED ~ MAX_SPEED）正数前进，负数后退
  */
 void PWM_Control_Car(int16_t L_motor_speed,int16_t R_motor_speed)
 {

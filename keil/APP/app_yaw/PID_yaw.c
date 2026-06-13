@@ -70,7 +70,7 @@ float YawPID_Compute(YawPID_t*pid,float error)
     pid->err = error;
     //积分:
     //积分分离，在误差小的时候才进行积分
-    if(fabs(error)<5.0f)
+    if(fabs(error)<10.0f)
     {
         pid->integral+=error;
     }
@@ -92,8 +92,6 @@ float YawPID_Compute(YawPID_t*pid,float error)
     pid->p_out = pid->Kp * pid->err;
     pid->i_out = pid->Ki * pid->integral;
     pid->d_out = pid->Kd * (pid->err-pid->prev_error);
-    
-    
 
     // PID 输出
     pid->pid_out = pid->p_out + pid->i_out + pid->d_out;

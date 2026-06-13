@@ -26,8 +26,10 @@ void bsp_Init(void)
     // ===== 预热 18 秒，等待温漂稳定 =====
     OLED_Clear();
     OLED_ShowString_Center(2, "wait stable", 1, true, true);
-    delay_ms(18000);   // 也可留出余量，写成 18000
+    delay_ms(18000);
     OLED_Clear();
     //直行
     walkStraight_Yaw_Init(&yaw_pid);
+    //循迹
+    IRTracking_Init(&track_pid, TRACK_SPEED);
 }

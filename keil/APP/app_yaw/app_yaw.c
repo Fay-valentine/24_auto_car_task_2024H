@@ -10,8 +10,6 @@ float Vz_Bias = 0.0f;  //转向偏差值，来克服左右轮差距
 YawPID_t yaw_pid;
 YawFilter_t yaw_filter;
 
-
-
 /**
  * @brief  计算一组角度的环形平均值（矢量平均）
  * @param  angles  角度数组，单位度，范围 [-180, 180]
@@ -92,7 +90,8 @@ void walkStraight_Yaw_Init(YawPID_t* pid)
 void walkStraight_Yaw_Reset(YawPID_t* pid) 
 {
     YawPID_Reset(pid);
-    PID_Clear_Motor(MAX_MOTOR);   // 清零两个电机的积分和输出
+    Motor_PID_Reset(&motor_pid[0]); 
+    Motor_PID_Reset(&motor_pid[1]); // 清零两个电机的积分和输出
 }
 
 void walkStraight_Yaw(YawPID_t* pid)
@@ -102,7 +101,6 @@ void walkStraight_Yaw(YawPID_t* pid)
         return;  // ← 未锁定时不执行
     }
 
-    
     float current_yaw=yaw_filter_Process(&yaw_filter,Get_Yaw());//一阶低通滤波
 
     pid->actual = current_yaw;//更新实际航向
@@ -117,6 +115,8 @@ void walkStraight_Yaw(YawPID_t* pid)
     float Vz=YawPID_Compute(pid,yaw_error);
     
     float Vz_total = Vz + Vz_Bias;
+    //往左偏时，error<0,需要Vz>0,往右调整;
+    //往右偏时，error>0,需要Vz<0，往左调整
+    //所以这里加了负号
     Motion_Car_Control(g_speed, 0, -(int16_t)Vz_total);
- 
 }
