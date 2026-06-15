@@ -59,8 +59,13 @@ float YawPID_GetTarget(YawPID_t* pid)
 {
     return pid->target;
 }
+
+/**
+ * @brief 顺时针:yaw减小，逆时针:yaw增大
+ */
 void YawPID_SetTarget(YawPID_t* pid, float target)
 {
+    Wrap_Process(&target);//防止超过-180到180
     pid->target = target;
 }
 

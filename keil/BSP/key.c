@@ -1,5 +1,8 @@
 #include "key.h"
-#include "AllHeader.h"
+#include "delay.h"
+#include "OLED.h"
+#include "ti_msp_dl_config.h"
+
 
 static uint8_t KeyNum=0;
 

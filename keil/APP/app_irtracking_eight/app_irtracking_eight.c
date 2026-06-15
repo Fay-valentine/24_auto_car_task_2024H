@@ -101,10 +101,10 @@ uint8_t LineCheck(void)
     {
         if (IR_Data_Number[i] == 0)//检测到任意黑线，返回IR_BLACK
         {
-            return IR_BLACK;
+            return BLACK_LINE;
         }
     }
-    return IR_WHITE;
+    return WHITE_LINE;
 }
 
 /**

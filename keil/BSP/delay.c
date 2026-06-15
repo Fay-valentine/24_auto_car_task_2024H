@@ -1,5 +1,5 @@
+#include "delay.h"
 #include "ti_msp_dl_config.h"
-#include "AllHeader.h"
 
 #define DELAY_SELECT 1
 volatile unsigned int delay_times = 0;
@@ -18,13 +18,12 @@ void delay_ms(unsigned int ms)
 }
 
 #elif DELAY_SELECT==1
-//ͨ��systick��ѯ��ȡ��ʵ����ʱ 
 void delay_us(unsigned long __us) 
 {
     uint32_t ticks;
     uint32_t told, tnow, tcnt = 0;
 
-    ticks = __us * (80000000 / 1000000);  // 80MHz ʱ��  
+    ticks = __us * (80000000 / 1000000);  //80MHz
     told = SysTick->VAL;
 
     while (1)
@@ -43,16 +42,15 @@ void delay_us(unsigned long __us)
         }
     }
 }
-//����δ�ʱ��ʵ�ֵľ�ȷms��ʱ 
+
 void delay_ms(unsigned long ms) 
 {
     while (ms--)
     {
-        delay_us(1000);  // ÿ����ʱ 1ms
+        delay_us(1000);
     }
 }
 #else
-//ͨ��systick�ж�ʵ����ʱ ��Ҫ��sysconfig�д�systick�ж�  
 void delay_ms(unsigned int ms)
 {
     delay_times=ms;

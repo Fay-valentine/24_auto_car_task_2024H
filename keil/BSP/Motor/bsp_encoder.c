@@ -78,9 +78,6 @@ void Encoder_Update(void)
     motorR_Encoder.temp_count=0;
 }
 
-//
-#if Motor_Switch==1
-
 volatile uint32_t g_encoder_irq_count = 0;
 //用于处理左右车轮编码器的信号
 void GROUP1_IRQHandler(void)
@@ -165,8 +162,3 @@ void GROUP1_IRQHandler(void)
     }
     
 }
-
-
-
-
-#endif

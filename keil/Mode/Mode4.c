@@ -31,9 +31,9 @@ void state_reset(void)
 void Mode4_Init(void)
 {
 	setModeLoopFlag(1);			//循环开启flag
-	g_speed=250;		//设置速度
-	Stop_Num=13;					//在第5个点停车，即第二次的A点
-	sampleYaw(&yaw_pid);//采样一次目标航向角
+	g_speed=250;				//设置速度
+	Stop_Num=13;				//在第13个点停车，即第二次的A点
+	sampleYaw(&yaw_pid);		//采样一次目标航向角
 	//显示相应信息
 	OLED_ShowNum_Grid(1,15,getModeLoopFlag(),1,1,0,1);     //显示循环开启flag
 	OLED_ShowNum_Grid(1,10,Stop_Num,1,1,0,1);           //显示停车点
@@ -116,12 +116,14 @@ void Mode4_Loop(void)
     		{
 		        if(Black_Flag==0)//不在黑线上
     		    {
-    		        walkStraight_Yaw(&yaw_pid);//直行
+    		        static uint32_t last_yaw_time = 0;
+					SCHEDULE(last_yaw_time,20,walkStraight_Yaw(&yaw_pid));//20ms调用一次直行函数
     		    }
     		    else//在黑线上
     		    {
     		        IRTracking_ResetPID(&track_pid);//重置PID参数
-    		        LineWalking(&track_pid);//循迹
+    		        static uint32_t last_track_time = 0;
+					SCHEDULE(last_track_time,20,LineWalking(&track_pid));//20ms调用一次循迹函数
     		    }
     		}
 		}

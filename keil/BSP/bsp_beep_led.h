@@ -1,10 +1,6 @@
 #ifndef __BSP_BEEP_LED_H_
 #define __BSP_BEEP_LED_H_
 
-
-
-
-
 void OPEN_MCULED(void);
 void CLOSE_MCULED(void);
 

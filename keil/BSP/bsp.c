@@ -3,13 +3,13 @@
 
 void board_Init(void)//使用串口打印初始化成功
 {
-    SYSCFG_DL_init();
-	IR_UART_Init();//八路红外模块串口
+    SYSCFG_DL_init();//系统配置
 }
 
 void bsp_Init(void)
 {
     board_Init();
+    IR_UART_Init();//八路红外模块串口
 
     OLED_Init();//OLED
 

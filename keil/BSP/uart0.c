@@ -1,29 +1,27 @@
 #include "uart0.h"
 #include "AllHeader.h"
 
-
-
 void UART_Init(void)
 {
-	//����ж������־
+	//清除中断请求标志
 	NVIC_ClearPendingIRQ(UART_0_INST_INT_IRQN);
-	//ʹ���ж�
+	//使能中断
 	NVIC_EnableIRQ(UART_0_INST_INT_IRQN);
 }
 
-//���ڷ��͵����ַ�
+//串口发送单个字符
 void uart0_send_char(char ch)
 {
-	//��æ
+	//等忙
 	while(DL_UART_isBusy(UART_0_INST)==true);
-	//���͵����ַ�
+	//发送单个字符
 	DL_UART_Main_transmitData(UART_0_INST,ch);
 }
 
-//���ڷ����ַ���   
+//串口发送字符串   
 void uart0_send_string(char* str)
 {
-	//�ַ�����Ϊ
+	//字符串不为
 	while(str!=NULL&&*str!='\0')
 	{
 		uart0_send_char(*str++);
@@ -31,10 +29,10 @@ void uart0_send_string(char* str)
 }
 
 #if !defined(__MICROLIB)
-//��ʹ��΢��Ļ�����Ҫ��������ĺ���
+//不使用微库的话就需要添加下面的函数
 //If you don't use the micro library, you need to add the following function
 #if (__ARMCLIB_VERSION <= 6000000)
-//�����������AC5  �Ͷ�����������ṹ��
+//如果编译器是AC5  就定义下面这个结构体
 //If the compiler is AC5, define the following structure
 struct __FILE
 {
@@ -44,7 +42,7 @@ struct __FILE
 
 FILE __stdout;
 
-//����_sys_exit()�Ա���ʹ�ð�����ģʽ
+//定义_sys_exit()以避免使用半主机模式
 //Define _sys_exit() to avoid using semihosting mode
 void _sys_exit(int x)
 {
@@ -52,7 +50,7 @@ void _sys_exit(int x)
 }
 #endif
 
-//�ض�����
+//重定向函数
 
 int fputc(int ch,FILE* stream)
 {
@@ -77,6 +75,3 @@ int puts(const char *_ptr)
 	count+=fputs("\n",stdout);
 	return count;
 }
-
-
-

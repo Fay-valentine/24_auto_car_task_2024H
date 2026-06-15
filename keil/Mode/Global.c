@@ -40,11 +40,11 @@ void Global_Loop(void)
 		}
 	}
 
+    //刷新yaw值
+    Global_yaw_refresh();
+
 	//黑线检测
     Global_blackLine_check();
-    
-	//刷新yaw值,10ms
-	Global_yaw_refresh();
 	
 	//低频刷新IR,yaw,point_count,black_flag,200ms
 	Global_LF_refresh();
@@ -65,7 +65,7 @@ void Global_Tick(void)
 }
 
 /**
- * @brief 低频刷新IR,yaw,point_count,black_flag,200ms
+ * @brief 低频刷新2行IR,3行yaw,4行point_count,black_flag,200ms
  */
 void Global_LF_refresh(void)
 { 
@@ -80,10 +80,11 @@ void Global_LF_refresh(void)
             IR_Data_Number[6], IR_Data_Number[7]);
         OLED_ShowString_Grid(2, 3, (char*)oledbuf, 1, 0, 1);//刷新IR数据
 
+        OLED_ShowSNum_Grid(3,6,YawPID_GetTarget(&yaw_pid),4,1,0,1);//更新显示一次target_yaw
         OLED_ShowSNum_Grid(3,16,Get_Yaw(),4,1,0,0);//刷新yaw
 
-        //OLED_ShowNum_Grid(4,6,point_count,1,1,0,1);//刷新point_count
-        //OLED_ShowNum_Grid(4,17,get_is_black(),1,1,0,1);//刷新黑线flag
+        OLED_ShowNum_Grid(4,6,point_count,1,1,0,1);//刷新point_count
+        OLED_ShowSNum_Grid(4,17,yaw_adjust,3,1,0,1);//刷新yaw调整
 		
         last_oled = Get_Time();
     }
@@ -92,11 +93,7 @@ void Global_LF_refresh(void)
 void Global_yaw_refresh(void)
 {
     static uint32_t last_yaw_time = 0;
-	if (Get_Time() - last_yaw_time >= 10) 
-	{
-		Yaw_Update();
-		last_yaw_time = Get_Time();
-	}
+	SCHEDULE(last_yaw_time, 20, Yaw_Update());
 }
 
 void Global_blackLine_check(void)
@@ -105,10 +102,6 @@ void Global_blackLine_check(void)
     {
         //10ms以上轮询,判断是否在黑线上
 	    static uint32_t last_black_time = 0;
-	    if (Get_Time() - last_black_time >= 10) 
-	    {
-	        Black_Check(Stop_Num);
-	        last_black_time = Get_Time();
-	    }
+		SCHEDULE(last_black_time, 20, Black_Check(Stop_Num));
     }
 }

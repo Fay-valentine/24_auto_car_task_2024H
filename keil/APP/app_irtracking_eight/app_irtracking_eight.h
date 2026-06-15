@@ -4,10 +4,6 @@
 #include "std_types.h"
 #include "PID_track.h"
 
-// 黑白定义 (与第一套硬件一致: 黑线=0, 白线=1)
-#define IR_BLACK       0        
-#define IR_WHITE       1    
-
 #define TRACK_SPEED       200      // 默认巡线速度
 
 // 全局变量 (供外部访问)

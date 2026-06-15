@@ -4,13 +4,36 @@
 extern uint8_t Cur_Mode;//在main中定义的
 
 volatile int Stop_Num=0;//在第几个点停车，全局变量，用于mode切换时进行赋值，在Black_Check()中使用
+
 uint8_t point_count=1;//记录经过了几个点，有A,B,C,D四个点
-uint8_t last_line=WHITE_LINE;//一开始在白线上
 uint8_t is_black=WHITE_LINE;//是否在黑线上
 uint8_t is_black_count=0;//黑线计数，满三次则认为在黑线上
-uint8_t is_black_flag=0;//是否在黑线上
+uint8_t cur_blackLine_flag=0;//当前状态是否为黑线，0:白线 1:黑线
+uint8_t pre_blackLine_flag=0;//上次状态是否为黑线，0:白线 1:黑线
 
 
+static uint32_t stateEnterTime=0;//记录上次 点状态 切换的时间戳
+
+void try_point_change_Reset(void)
+{
+    stateEnterTime=0;
+}
+
+/***
+ * @brief 使得某个状态至少运行n秒以上
+ * @param seconds 运行的秒数
+ * @return 1:状态切换成功 0:状态切换失败
+ */
+uint8_t try_point_change(uint8_t seconds)
+{
+    if(Get_Time()-stateEnterTime>=seconds*1000)//运行满n秒后，允许point_count切换为新状态
+    {
+        point_count++;
+        stateEnterTime=Get_Time();//更新状态进入时间
+        return 1;
+    }
+    return 0;
+}
 
 /**
  * @brief 点数为1，设置上一次在白线，即设置为A点状态
@@ -18,10 +41,10 @@ uint8_t is_black_flag=0;//是否在黑线上
  */
 void Black_Check_Reset(void)
 {
-    is_black_flag=0;//重置黑线标志位
+    cur_blackLine_flag=0;//重置黑线标志位
     is_black_count=0;//重置黑线消抖计数器
     point_count=1;
-    last_line=WHITE_LINE;
+    try_point_change_Reset();
 }
 
 /**
@@ -30,12 +53,11 @@ void Black_Check_Reset(void)
  */
 void Black_Check(uint8_t num)
 {
-    //更新八路数据
-    static uint8_t x1,x2,x3,x4,x5,x6,x7,x8;
-	deal_IRdata(&x1,&x2,&x3,&x4,&x5,&x6,&x7,&x8);
-    
-    //is_black：是否在黑线上
-    is_black = (x1==0 || x2==0 ||x3==0 ||x4==0 ||x5==0 ||x6==0 ||x7==0 ||x8==0 ) ? BLACK_LINE : WHITE_LINE;
+    //保存旧的黑线标志状态，用于边沿检测
+    pre_blackLine_flag = cur_blackLine_flag;
+
+    //is_black：本次调用是否在黑线上
+    is_black = LineCheck();
     //消抖处理：连续3次检测到黑线才确认
     if(is_black == BLACK_LINE)
     {
@@ -43,40 +65,14 @@ void Black_Check(uint8_t num)
         {
             is_black_count++;
         }
-        
-        //连续3次检测到黑线，且之前不在黑线上，才计数
-        if(is_black_count >= 3 && is_black_flag == 0)
+        else
         {
-            is_black_flag = 1;
-            Set_RGB(true, Red_RGB);
-            point_count++;
-            
-            //检查是否达到停车点
-            if(point_count >= num)
-            {
-                switch (Cur_Mode)
-                {
-                case Mode1:
-                    Mode1_Exit();
-                    break;
-                case Mode2:
-                    Mode2_Exit();
-                    break;
-                case Mode3:
-                    Mode3_Exit();
-                    break;
-                case Mode4:
-                    Mode4_Exit();
-                    break;
-                default:
-                    break;
-                }
-            }
+            cur_blackLine_flag = 1;
         }
     }
-    else
+    else//检测到白线，逐步减少计数器
     {
-        //检测到白线，逐步减少计数器
+        
         if(is_black_count > 0)
         {
             is_black_count--;
@@ -84,16 +80,45 @@ void Black_Check(uint8_t num)
         else
         {
             //确认离开黑线
-            is_black_flag = 0;
+            cur_blackLine_flag = 0;
         }
     }
     
-    last_line = is_black;//更新上一次的线状态
+
+    //边沿检测：白→黑（0→1）或 黑→白（1→0）时触发点切换
+    if((pre_blackLine_flag == 0 && cur_blackLine_flag == 1) || 
+       (pre_blackLine_flag == 1 && cur_blackLine_flag == 0))
+    {
+        Set_RGB(true, Red_RGB);//RGB灯亮红
+        try_point_change(3);//尝试点数切换
+        
+        //检查是否达到停车点
+        if(point_count >= num)
+        {
+            switch (Cur_Mode)
+            {
+            case Mode1:
+                Mode1_Exit();
+                break;
+            case Mode2:
+                Mode2_Exit();
+                break;
+            case Mode3:
+                Mode3_Exit();
+                break;
+            case Mode4:
+                Mode4_Exit();
+                break;
+            default:
+                break;
+            }
+        }
+    }
 
 }
 uint8_t get_is_black(void)
 {
-    return is_black_flag;
+    return cur_blackLine_flag;
 }
 
 //任务数组进行黑线计数控制

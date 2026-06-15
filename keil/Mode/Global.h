@@ -12,6 +12,8 @@ typedef enum
     Mode4=4,
 }Mode;
 
+
+
 void setModeLoopFlag(uint8_t flag);
 uint8_t getModeLoopFlag(void);
 void Global_LF_refresh(void);

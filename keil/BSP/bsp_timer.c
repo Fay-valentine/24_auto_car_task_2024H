@@ -28,7 +28,7 @@ void TIMER_20ms_INST_IRQHandler(void)
             gled_cnt=0;
             DL_GPIO_togglePins(LED_PORT,LED_MCU_PIN);
         }
-        DL_TimerG_clearInterruptStatus(TIMER_20ms_INST, DL_TIMERG_INTERRUPT_ZERO_EVENT); // 新增
+        DL_TimerG_clearInterruptStatus(TIMER_20ms_INST, DL_TIMERG_INTERRUPT_ZERO_EVENT);//清除中断标志位
 	}
 
 }
@@ -38,7 +38,6 @@ void TIMER_20ms_INST_IRQHandler(void)
 #if Timer_1ms_Switch
 
 volatile uint32_t msHcCount=0;//系统时基，1ms自增1
-volatile uint32_t systick_counter = 0; // 另一个计数器（预留）
 
 uint32_t Get_Time(void)
 {
@@ -47,9 +46,9 @@ uint32_t Get_Time(void)
 
 void Timer_1ms_Init(void)
 {
-    NVIC_ClearPendingIRQ(TIMER_1ms_INST_INT_IRQN);
-    NVIC_EnableIRQ(TIMER_1ms_INST_INT_IRQN);
-    DL_TimerA_startCounter(TIMER_1ms_INST);   // 启动定时器计数
+    NVIC_ClearPendingIRQ(TIMER_1ms_INST_INT_IRQN);//清除挂起的中断请求
+    NVIC_EnableIRQ(TIMER_1ms_INST_INT_IRQN);      //使能中断
+    DL_TimerA_startCounter(TIMER_1ms_INST);       //启动定时器计数
 }
 
 void TIMA1_IRQHandler(void)
@@ -60,13 +59,8 @@ void TIMA1_IRQHandler(void)
         msHcCount++;
         Key_Tick();//按键检测
         RGB_Tick();//RGB亮灭
-        DL_TimerA_clearInterruptStatus(TIMER_1ms_INST, DL_TIMERA_INTERRUPT_LOAD_EVENT);
+        DL_TimerA_clearInterruptStatus(TIMER_1ms_INST, DL_TIMERA_INTERRUPT_LOAD_EVENT);//清除中断标志位
         break;
-    // case DL_TIMERA_IIDX_ZERO:
-    //     systick_counter++;//预留
-    //     DL_TimerA_clearInterruptStatus(TIMER_1ms_INST, DL_TIMERA_INTERRUPT_ZERO_EVENT);
-    //     break;
-
     default:
         break;
     }

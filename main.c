@@ -54,93 +54,100 @@ int main(void)//需要调试循迹PID参数
 	OLED_ShowString_Grid(3,0,"t_yaw:",1,1,1);//目标yaw
     OLED_ShowString_Grid(3,12,"yaw:",1,0,1);//原始yaw
     
-	OLED_ShowString_Grid(4,0,"P:",1,1,1);
+	/*OLED_ShowString_Grid(4,0,"P:",1,1,1);
 	OLED_ShowString_Grid(4,5,"I:",1,0,1);
-	OLED_ShowString_Grid(4,10,"D:",1,0,1);
-    //OLED_ShowString_Grid(4,0,"point:",1,1,1);//点数
-    //OLED_ShowString_Grid(4,9,"black_f:",1,0,1);//黑线flag
+	OLED_ShowString_Grid(4,10,"D:",1,0,1);*/
+    OLED_ShowString_Grid(4,0,"point:",1,1,1);//点数
+    OLED_ShowString_Grid(4,8,"y_adjust:",1,0,1);//yaw调整
 
+	
+	// while(1)
+	// {
+	// 	Global_Loop();
+		
+	// 	uint8_t key = Key_Scan();
+
+	// 	if(key == KEY1)//直走
+	// 	{
+	// 	    sampleYaw(&yaw_pid);        // 采样锁定目标航向角
+	// 	    while(1)
+	// 	    {
+	// 	        Global_Loop();
+	// 	        static uint32_t last_time = 0;
+	// 	        if (Get_Time() - last_time >= 20) // 20ms调用一次yaw纠偏
+	// 	        {
+	// 	            walkStraight_Yaw(&yaw_pid);
+	// 	            last_time = Get_Time();
+	// 	        }
+	// 	        if(Key_Scan() == KEY3) // 再次按KEY3退出
+	// 	        {
+	// 				Motion_Stop(STOP_BRAKE);		//优先刹车
+	// 				walkStraight_Yaw_Reset(&yaw_pid);	//重置直行函数
+	// 				YawPID_Unlock(&yaw_pid);//解锁朝向
+	// 	            break;
+	// 	        }
+	// 	    }
+	// 	}
+	// 	if(key == KEY2)//运行循迹
+	// 	{
+	// 		while(1)
+	// 		{
+	// 			Global_Loop();
+	// 			//15ms调用一次LineWalking
+	// 			static uint32_t last_time = 0;
+	// 			if (Get_Time() - last_time >= 15) 
+	// 			{
+	// 			    LineWalking(&track_pid);
+	// 			    last_time = Get_Time();
+	// 			}
+	// 		}
+	// 	}
+	// 	if(key == KEY3)
+	// 	{
+			
+	// 	}
+	// }
 	
 	while(1)
 	{
 		Global_Loop();
-		
 		uint8_t key = Key_Scan();
-
-		if(key == KEY1)//直走
-		{
-		    sampleYaw(&yaw_pid);        // 采样锁定目标航向角
-		    while(1)
-		    {
-		        Global_Loop();
-		        static uint32_t last_time = 0;
-		        if (Get_Time() - last_time >= 20) // 20ms调用一次yaw纠偏
-		        {
-		            walkStraight_Yaw(&yaw_pid);
-		            last_time = Get_Time();
-		        }
-		        if(Key_Scan() == KEY3) // 再次按KEY3退出
-		        {
-					Motion_Stop(STOP_BRAKE);		//优先刹车
-					walkStraight_Yaw_Reset(&yaw_pid);	//重置直行函数
-					YawPID_Unlock(&yaw_pid);//解锁朝向
-		            break;
-		        }
-		    }
-		}
-		if(key == KEY2)//运行循迹
-		{
-			while(1)
-			{
-				Global_Loop();
-				//15ms调用一次LineWalking
-				static uint32_t last_time = 0;
-				if (Get_Time() - last_time >= 15) 
-				{
-				    LineWalking(&track_pid);
-				    last_time = Get_Time();
-				}
-			}
-		}
 		if(key == KEY3)
 		{
-			
+			yaw_adjust++;
+	        if(yaw_adjust>11)
+	        {
+	            yaw_adjust=-10;
+	        }
 		}
-
-
+		if(Cur_Mode==Next_Mode && Key2_is_Press()==KEY_RELEASE)//运行当前模式的Loop
+		{
+			switch (Cur_Mode)
+			{
+			case 1:Mode1_Loop();break;
+			case 2:Mode2_Loop();break;
+			case 3:Mode3_Loop();break;
+			case 4:Mode4_Loop();break;
+			}
+		}
+		if(Cur_Mode!=Next_Mode && Key2_is_Press()==KEY_PRESS)//进行模式切换
+		{
+			switch (Cur_Mode)
+			{
+			case 1:Mode1_Exit();break;
+			case 2:Mode2_Exit();break;
+			case 3:Mode3_Exit();break;
+			case 4:Mode4_Exit();break;
+			}
+			switch(Next_Mode)
+			{
+			case 1:Mode1_Init();break;
+			case 2:Mode2_Init();break;
+			case 3:Mode3_Init();break;
+			case 4:Mode4_Init();break;
+			}
+			Cur_Mode=Next_Mode;
+		}
+		
 	}
-	
-	// while(1)
-	// {
-		
-	// 	if(Cur_Mode==Next_Mode && Key2_is_Press()==KEY_RELEASE)//运行当前模式的Loop
-	// 	{
-	// 		switch (Cur_Mode)
-	// 		{
-	// 		case 1:Mode1_Loop();break;
-	// 		case 2:Mode2_Loop();break;
-	// 		case 3:Mode3_Loop();break;
-	// 		case 4:Mode4_Loop();break;
-	// 		}
-	// 	}
-	// 	if(Cur_Mode!=Next_Mode && Key2_is_Press()==KEY_PRESS)//进行模式切换
-	// 	{
-	// 		switch (Cur_Mode)
-	// 		{
-	// 		case 1:Mode1_Exit();break;
-	// 		case 2:Mode2_Exit();break;
-	// 		case 3:Mode3_Exit();break;
-	// 		case 4:Mode4_Exit();break;
-	// 		}
-	// 		switch(Next_Mode)
-	// 		{
-	// 		case 1:Mode1_Init();break;
-	// 		case 2:Mode2_Init();break;
-	// 		case 3:Mode3_Init();break;
-	// 		case 4:Mode4_Init();break;
-	// 		}
-	// 		Cur_Mode=Next_Mode;
-	// 	}
-		
-	// }
 }

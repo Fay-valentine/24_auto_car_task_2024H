@@ -5,13 +5,13 @@
 
 struct YawPID_t;
 
-#define BLACK_LINE      1
-#define WHITE_LINE      0
+#define BLACK_LINE      0
+#define WHITE_LINE      1
 
 extern uint8_t point_count;
 extern volatile int8_t turn_adjust;
 extern volatile int Stop_Num;
-extern uint8_t is_black_flag;
+extern uint8_t cur_blackLine_flag;
 typedef void(*TaskFunc)(uint8_t arg);// 定义统一的函数指针类型
 
 //任务结构体
@@ -26,6 +26,7 @@ typedef struct
 
 void Black_Check(uint8_t stop_num);
 void Black_Check_Reset(void);
+uint8_t try_point_change(uint8_t seconds);
 uint8_t get_is_black(void);
 
 void Schedule_Run(void);
