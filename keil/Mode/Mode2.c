@@ -16,7 +16,7 @@ int yaw_adjust=-10;//yaw调整，用于在地板上的地图刚好
 
 void Mode2_Init(void)
 {
-	g_speed=250;				//设置速度
+	g_speed=G_SPEED;				//设置速度
 	Stop_Num=5;					//在第5个点停车，即第二次的A点
 	setModeLoopFlag(1);			//循环开启flag
 	sampleYaw(&yaw_pid);		//采样锁定目标航向角
@@ -41,7 +41,7 @@ void Mode2_Loop(void)//在直行函数和循迹函数之间切换，通过是否
 		}
 		else if (point_count == POINT_B)//B点循迹至C点
 		{
-			SCHEDULE(last_track_time, 20, LineWalking(&track_pid));
+			SCHEDULE(last_track_time, 20, IRTracking(&track_pid));
 		}
 		else if (point_count == POINT_C)//C点直行至D点
 		{
@@ -61,7 +61,7 @@ void Mode2_Loop(void)//在直行函数和循迹函数之间切换，通过是否
 		        IRTracking_ResetPID(&track_pid);  // 重置循迹PID参数
 		        InitFlag_D = 1;
 		    }
-		    SCHEDULE(last_track_time, 20, LineWalking(&track_pid));  // D点循迹至A点
+		    SCHEDULE(last_track_time, 20, IRTracking(&track_pid));  // D点循迹至A点
 		}
 	}
 	

@@ -1,16 +1,11 @@
 #include "app_motor.h"
 #include "AllHeader.h"
 
-static float speed_lr = 0;
 static float speed_fb = 0;
 static float speed_spin = 0;//旋转速度
 
 static int speed_L1_setup = 0;
 static int speed_R1_setup = 0;
-
-
-static int g_offset_yaw = 0;
-static uint16_t g_speed_setup = 0;
 
 // 编码器10毫秒前后数据
 //Encoder data before and after 10 milliseconds
@@ -20,7 +15,73 @@ int g_Encoder_All_Offset[MAX_MOTOR] = {0};
 
 uint8_t g_start_ctrl = 0;
 
-car_data_t car_data;
+// 静态变量记录重置时刻的初始脉冲数，仅本文件内部使用
+static int enc_left_reset = 0;
+static int enc_right_reset = 0;
+static uint8_t encoder_init = 0; // 标记是否已进行过重置初始化
+
+
+
+/**
+ * @brief 将当前时刻的编码器累计脉冲数记录为新的“零点”，之后调用 get_odometry() 返回的距离将相对于此新起点。
+ * @note 本函数无需形参，会在内部自动调用 Encoder_Get_ALL 读取当前脉冲。
+ */
+void reset_odometry(void)
+{
+    int enc_now[2];
+    Encoder_Get_ALL(enc_now);  // 获取最新的左右轮总脉冲数
+    
+    enc_left_reset = enc_now[0];   // 保存左轮零点脉冲
+    enc_right_reset = enc_now[1];  // 保存右轮零点脉冲
+    encoder_init = 1;           // 标记已初始化
+}
+
+/**
+* @brief 计算并返回左右轮相对于起点的行驶距离（单位：毫米）。
+* @note 逻辑：读取当前脉冲 -> 减去之前保存的零点脉冲 -> 得到有效脉冲差 ->
+*       脉冲差 / 单圈脉冲数 * 轮子周长 = 行驶距离。
+*       备注：若从未调用过 reset_odometry，则默认以开机时为起点。
+*/
+odometry_t get_odometry_mm(void)
+{
+    odometry_t odom = {0.0f, 0.0f, 0.0f, 0.0f};
+    int enc_now[2];
+    int left_pulse, right_pulse;
+
+    // 1. 获取当前编码器累计脉冲数（来自 bsp_encoder.c 的全局变量）
+    Encoder_Get_ALL(enc_now);
+
+    // 2. 若从未重置过起点，则自动将“开机时刻”设为起点（提高鲁棒性）
+    if (!encoder_init) 
+    {
+        enc_left_reset = enc_now[0];
+        enc_right_reset = enc_now[1];
+        encoder_init = 1;
+    }
+
+    // 3. 计算相对于零点的脉冲增量（带符号，正为正向）
+    left_pulse = enc_now[0] - enc_left_reset;
+    right_pulse = enc_now[1] - enc_right_reset;
+
+    // 4. 脉冲数 -> 毫米数 换算
+    //    公式：距离 = 脉冲数 / (减速比45 * 线数13 * 倍频4) * 轮子周长(mm)
+    odom.left_mm = (float)left_pulse / ENCODER_CIRCLE_450 * MECANUM_CIRCLE_MM;
+    odom.right_mm = (float)right_pulse / ENCODER_CIRCLE_450 * MECANUM_CIRCLE_MM;
+
+    return odom;
+}
+
+/**
+ * @brief 计算并返回左右轮相对于起点的行驶距离（单位：厘米）。
+ * @note 逻辑：将 get_odometry_mm() 返回的毫米值除以100，即可得到厘米值。
+ */
+odometry_t get_odometry_cm(void)
+{
+    odometry_t odom = get_odometry_mm();
+    odom.left_cm = odom.left_mm / 10.0f;
+    odom.right_cm = odom.right_mm / 10.0f;
+    return odom;
+}
 
 static float Motion_Get_Circle_Pulse(void)
 {
@@ -130,6 +191,8 @@ void Motion_Handle(void)
     }
 }
 
+#define SPIN_PARAMETER     (1000.0f)//转向参数，越小转向力度上限越高
+
 /**
  * @brief 上层设置速度的函数，单位是mm/s
  * 
@@ -141,9 +204,8 @@ void Motion_Handle(void)
 void Motion_Car_Control(int16_t V_x, int16_t V_y, int16_t V_z)
 {
 	float robot_APB = Motion_Get_APB();
-	speed_lr = 0;
     speed_fb = V_x;
-    speed_spin = (V_z / 1000.0f) * robot_APB;
+    speed_spin = (V_z / SPIN_PARAMETER) * robot_APB;//300原为1000，越小转向力度上限越高
     if (V_x == 0 && V_y == 0 && V_z == 0)
     {
         Motion_Set_Speed(0,0);
@@ -163,3 +225,4 @@ void Motion_Car_Control(int16_t V_x, int16_t V_y, int16_t V_z)
 
     Motion_Set_Speed(speed_L1_setup,speed_R1_setup);
 }
+

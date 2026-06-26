@@ -1,7 +1,7 @@
 #include "PID_motor.h"
 #include "AllHeader.h"
 
-#define G_SPEED 250     //全局速度
+
 int g_speed=G_SPEED;
 
 //车轮pid声明

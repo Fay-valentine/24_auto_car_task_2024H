@@ -34,7 +34,7 @@ void Global_Loop(void)
 	{
 		Next_Mode++;
 		OLED_ShowNum_Grid(1,5,Next_Mode,1,1,0,1);//刷新模式显示
-		if(Next_Mode>Mode4)
+		if(Next_Mode>Mode6)
 		{
 			Next_Mode=-1;//切回模式1
 		}
@@ -72,7 +72,7 @@ void Global_LF_refresh(void)
 	static uint32_t last_oled = 0;
     if (Get_Time() - last_oled > 200)
     {
-        // 显示 8 位数据
+        //显示 8 位数据
         sprintf((char*)oledbuf, "%d%d%d%d%d%d%d%d", 
             IR_Data_Number[0], IR_Data_Number[1],
             IR_Data_Number[2], IR_Data_Number[3],
@@ -80,11 +80,12 @@ void Global_LF_refresh(void)
             IR_Data_Number[6], IR_Data_Number[7]);
         OLED_ShowString_Grid(2, 3, (char*)oledbuf, 1, 0, 1);//刷新IR数据
 
+        
         OLED_ShowSNum_Grid(3,6,YawPID_GetTarget(&yaw_pid),4,1,0,1);//更新显示一次target_yaw
         OLED_ShowSNum_Grid(3,16,Get_Yaw(),4,1,0,0);//刷新yaw
 
-        OLED_ShowNum_Grid(4,6,point_count,1,1,0,1);//刷新point_count
-        OLED_ShowSNum_Grid(4,17,yaw_adjust,3,1,0,1);//刷新yaw调整
+        // OLED_ShowNum_Grid(4,6,point_count,1,1,0,1);//刷新point_count
+        
 		
         last_oled = Get_Time();
     }

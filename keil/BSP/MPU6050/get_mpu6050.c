@@ -15,7 +15,7 @@ void Get_EulerAngles(void)
 	static int a;
     //获取欧拉角 Get Euler angles
 	float p, r, y;
-	mpu_dmp_get_data(&p, &r, &y);
+	mpu_dmp_get_data(&p, &r, &y);//读取周期为10ms
 	pitch = p; roll = r; yaw = y;
 	//MPU6050ReadGyro(&gyrox,&gyroy,&gyroz);	//陀螺仪
 	//MPU6050ReadAcc(&aacx,&aacy,&aacz);

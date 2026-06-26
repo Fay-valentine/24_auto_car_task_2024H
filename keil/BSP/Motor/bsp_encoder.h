@@ -1,8 +1,6 @@
 #ifndef __BSP_ENCODER_H__
 #define __BSP_ENCODER_H__
 
-
-
 extern int Encoder_L;
 extern int Encoder_R;
 //方向枚举

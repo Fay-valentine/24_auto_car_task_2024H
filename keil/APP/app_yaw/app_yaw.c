@@ -66,11 +66,11 @@ void sampleYaw(YawPID_t* pid)
             yaw_samples[valid_count++] = Get_Yaw();
             delay_ms(10);
         }
-        pid->target = average_yaw_deg(yaw_samples, valid_count);//计算平均值
+        YawPID_SetTarget(pid, average_yaw_deg(yaw_samples, valid_count));
 
         pid->locked = 1;//锁定采样
 
-        OLED_ShowSNum_Grid(3,6,pid->target,4,1,0,1);//更新显示一次target_yaw
+        OLED_ShowSNum_Grid(3,6,YawPID_GetTarget(pid),4,1,0,1);//更新显示一次target_yaw
         
         return;//进行下一次周期，防止current_yaw未更新
     }
@@ -92,6 +92,22 @@ void walkStraight_Yaw_Reset(YawPID_t* pid)
     YawPID_Reset(pid);
     Motor_PID_Reset(&motor_pid[0]); 
     Motor_PID_Reset(&motor_pid[1]); // 清零两个电机的积分和输出
+    yaw_filter_Reset(&yaw_filter);
+}
+
+/**
+ * @brief 重置pid运行时状态，保留Kp/Ki/Kd/限幅/target/locked
+ * @param pid 
+ */
+void walkStraight_Yaw_RunningReset(YawPID_t* pid)
+{
+        pid->p_out = 0.0f;
+        pid->i_out = 0.0f;
+        pid->d_out = 0.0f;
+        pid->pid_out = 0.0f;
+        pid->err = 0.0f;
+        pid->prev_error = 0.0f;
+        pid->integral = 0.0f;
 }
 
 void walkStraight_Yaw(YawPID_t* pid)

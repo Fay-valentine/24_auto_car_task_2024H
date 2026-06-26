@@ -4,8 +4,10 @@
 
 #define MOTOR_NUM   2
 
-#define PID_MOTOR_KP (0.8f) //0.8
-#define PID_MOTOR_KI (0.06f) //0.06
+#define G_SPEED 350     //全局速度
+
+#define PID_MOTOR_KP (1.5f) //0.8
+#define PID_MOTOR_KI (0.08f) //0.06
 #define PID_MOTOR_KD (0.5f) //0.5
 
 extern int g_speed;

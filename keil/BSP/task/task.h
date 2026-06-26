@@ -33,5 +33,9 @@ void Schedule_Run(void);
 uint8_t turnByAngle(struct YawPID_t *pid,int8_t direction, float angle);
 uint8_t turnByAngle_IsBusy(void);
 void turnByAngle_Reset(void);
+void TurnByAngle_Test(void);
+void line_yaw_walk_test(void);
+void odometry_test(void);
+void IRTracking_test(void);
 
 #endif

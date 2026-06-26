@@ -4,7 +4,7 @@
 #include "std_types.h"
 #include "PID_track.h"
 
-#define TRACK_SPEED       200      // 默认巡线速度
+#define TRACK_SPEED       300      // 默认巡线速度
 
 // 全局变量 (供外部访问)
 extern int g_IR_track_speed;   // 巡线速度, 可动态修改
@@ -37,6 +37,6 @@ uint8_t LineCheck(void);
 /**
  * @brief 主循迹函数 (在main循环中周期调用)
  */
-void LineWalking(TrackPID_t *pid);  
+void IRTracking(TrackPID_t *pid);  
 
 #endif /* _APP_IRTRACKING_H_ */

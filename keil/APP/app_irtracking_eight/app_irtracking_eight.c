@@ -18,9 +18,9 @@ void IRTracking_Init(TrackPID_t *pid, int speed)
 {
     // 设置速度
     g_IR_track_speed = speed;
-    // 初始化PID (KP, KI, KD, 积分限幅, 输出限幅)
+    // 初始化PID (KP, KI, KD, 积分限幅, 输出限幅, 积分分离阈值)
     TrackPID_Init(pid, PID_TRACK_KP, PID_TRACK_KI, PID_TRACK_KD,
-                  PID_TRACK_INTEGRAL_LIMIT, PID_TRACK_OUTPUT_LIMIT);
+                  PID_TRACK_INTEGRAL_LIMIT, PID_TRACK_OUTPUT_LIMIT, PID_TRACK_INTEGRAL_THRESHOLD);
     // 目标偏差为0 (希望黑线居中)
     TrackPID_SetTarget(pid, 0.0f);
 }
@@ -53,22 +53,20 @@ static float Calculate_Weighted_Error(void)
         }
     }
 
-    if (active_count > 0)
-    {
-        // 有黑线: 计算重心偏差
+    if (active_count > 0)// 有黑线: 计算重心偏差
+    {   
         last_err = (float)weighted_sum / (float)active_count;
         return last_err;
     }
-    else
+    else// 全白 (丢失黑线): 根据上次偏差方向强制给一个较大偏差
     {
-        // 全白 (丢失黑线): 根据上次偏差方向强制给一个较大偏差
-        if (last_err > 0.0f)//上次在黑线右侧，向左寻找
+        if (last_err > 0.0f)//上次在黑线左侧，向右寻找
         {
-            return -4.0f;
+            return 3.0f;
         }
-        else if (last_err < 0.0f)//上次在黑线左侧，向右寻找
+        else if (last_err < 0.0f)//上次在黑线右侧，向左寻找
         {
-            return 4.0f;
+            return -3.0f;
         }
         else
         {
@@ -110,7 +108,7 @@ uint8_t LineCheck(void)
 /**
  * @brief 主循迹函数 (需周期性调用)
  */
-void LineWalking(TrackPID_t *pid)
+void IRTracking(TrackPID_t *pid)
 {
     float err;
     float turn;
@@ -123,6 +121,8 @@ void LineWalking(TrackPID_t *pid)
 
     // 3. 设置电机速度
     //error<0,说明小车在黑线右侧，需要左转，即Vz<0; error>0,说明小车在黑线左侧，需要右转，即Vz>0;
-    //所以这里直接传入turn,即PID计算出的输出值    
-    Motion_Car_Control(g_IR_track_speed, 0, (int16_t)turn);
+    //所以这里直接传入turn,即PID计算出的输出值  
+     int16_t turn_scaled = (int16_t)(turn * (1000.0f / Motion_Get_APB()));//消除Motion_Car_Control中的SPIN_PARAMETER缩小
+    Motion_Car_Control(g_IR_track_speed, 0, turn_scaled);  
+    
 }

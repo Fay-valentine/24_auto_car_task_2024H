@@ -4,12 +4,12 @@
 #include "std_types.h"
 #include "bsp_motor.h"//要使用MAX_SPEED和MOTOR_DEAD_ZONE宏
 
-#define PID_TRACK_KP                (360.0f)
-#define PID_TRACK_KI                (1.5f)
-#define PID_TRACK_KD                (270.0f)
-#define PID_TRACK_INTEGRAL_LIMIT    (100.0f)  // 积分限幅 (绝对值)
+#define PID_TRACK_KP                (70.0f)//200速：360
+#define PID_TRACK_KI                (0.0f)//原1.5，停用积分，只用PD
+#define PID_TRACK_KD                (35.0f)//200速：270.0f
+#define PID_TRACK_INTEGRAL_LIMIT    (20.0f)  // 积分限幅 (绝对值)，原100
 #define PID_TRACK_OUTPUT_LIMIT      (MAX_SPEED)  // 输出限幅, 沿用第一套宏
-
+#define PID_TRACK_INTEGRAL_THRESHOLD (2.0f)  //积分分离阈值，只在误差小于阈值时才进行积分
 /**
  * @brief 循迹PID结构体 (位置式PD+I，支持积分限幅)
  */
@@ -27,7 +27,9 @@ typedef struct
     float integral;          /**< 积分累加值 */
     
     float integral_limit;    /**< 积分限幅 (绝对值) */
+    
     float output_limit;      /**< 输出限幅 (绝对值) */
+    float integral_threshold; /**< 积分分离阈值 (阈值) */
     
     float target;            /**< 目标偏差 (通常为0) */
 } TrackPID_t;
@@ -40,9 +42,10 @@ typedef struct
  * @param kd            微分系数
  * @param integral_limit 积分限幅 (正值)
  * @param output_limit   输出限幅 (正值)
- */
+ * @param integral_threshold 积分分离阈值 (阈值)
+ * */
 void TrackPID_Init(TrackPID_t *pid, float kp, float ki, float kd,
-                   float integral_limit, float output_limit);
+                   float integral_limit, float output_limit, float integral_threshold);
 
 /**
  * @brief 重置循迹PID (清零历史误差和积分)
